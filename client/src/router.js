@@ -18,6 +18,7 @@ import UpdateUser from "./views/User/UpdateUser";
 import Register from "./views/Staff/Register";
 import Login from "./views/Staff/Login";
 import StaffIndex from "./views/Staff/Index";
+import BorrowingBooks from "./views/Staff/BorrowingBooks";
 Vue.use(Router);
 
 const router = new Router({
@@ -83,7 +84,8 @@ const router = new Router({
       component: StaffIndex,
       children: [
         { path: "", component: Home },
-        { path: "/home", name: "home", component: Home }
+        { path: "/home", name: "home", component: Home },
+        { path: "/borrowingBooks", name: "BorrowingBooks", component: BorrowingBooks },
       ]
     },
     {

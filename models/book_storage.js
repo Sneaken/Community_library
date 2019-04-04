@@ -24,8 +24,16 @@ const bookStorage = sequelize.define(
     },
     status: {
       type: Sequelize.DataTypes.ENUM("库本", "在库", "借出", "已预约"),
-      allowNull: true,
+      allowNull: false,
       defaultValue: "在库"
+    },
+    appointment_of_reader_number: {
+      type: Sequelize.DataTypes.CHAR(18),
+      allowNull: true,
+      references: {
+        model: "user",
+        key: "id_number"
+      }
     }
   },
   {

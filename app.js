@@ -8,6 +8,7 @@ const passport = require('passport');
 const usersRouter = require ('./routes/api/user');
 const adminRouter = require ('./routes/api/admin');
 const staffRouter = require('./routes/api/staff');
+const generalRouter = require('./routes/api/generalPurpose');
 const app = express ();
 
 // view engine setup
@@ -26,6 +27,7 @@ require('./config/passport')(passport);
 app.use('/api/user', usersRouter);
 app.use('/api/admin',adminRouter);
 app.use('/api/staff',staffRouter);
+app.use('api/generalPurpose',generalRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

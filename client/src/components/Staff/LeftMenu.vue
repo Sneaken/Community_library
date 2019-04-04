@@ -46,7 +46,7 @@ export default {
                   {
                       icon: "el-icon-view",
                       name: "借阅图书",
-                      path: "borrowingManagement",
+                      path: "borrowingBooks",
                   },
                   {
                       icon: "el-icon-menu",

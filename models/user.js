@@ -31,7 +31,7 @@ const user = sequelize.define(
       allowNull: true
     },
     status: {
-      type: Sequelize.DataTypes.ENUM("正常", "挂失", "交罚金"),
+      type: Sequelize.DataTypes.ENUM("正常", "挂失", "交罚金", '吊销期'),
       allowNull: false,
       defaultValue: "正常"
     },
