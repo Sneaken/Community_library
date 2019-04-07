@@ -83,7 +83,7 @@
                 this.$refs[formName].validate (valid => {
                     if (valid) {
                         this.$axios
-                            .post ("/api/staff/borrowingBooks", this.ruleForm2)
+                            .post ("/api/staff/borrowingBook", this.ruleForm2)
                             .then (res => {
                                 this.results = res.data.results;
                                 console.log (res.data);

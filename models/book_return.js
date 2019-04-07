@@ -37,11 +37,6 @@ const bookReturn = sequelize.define(
       status: {
           type: Sequelize.DataTypes.ENUM('逾期','正常'),
           allowNull: false
-      },
-      day: {
-          type: Sequelize.DataTypes.INTEGER(3),
-          allowNull: false,
-          defaultValue: '0'
       }
   },
   {
