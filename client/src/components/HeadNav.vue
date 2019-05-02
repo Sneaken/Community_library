@@ -48,7 +48,12 @@ export default {
       }
     },
     showInfoList() {
-      this.$router.push("/infoShow");
+        if (this.$store.getters.user.identity) {
+            this.$router.push("/staff/infoShow2");
+        }else{
+            this.$router.push("/infoShow");
+
+        }
     },
     logout() {
         if (this.$store.getters.user.identity) {

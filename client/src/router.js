@@ -19,6 +19,13 @@ import Register from "./views/Staff/Register";
 import Login from "./views/Staff/Login";
 import StaffIndex from "./views/Staff/Index";
 import BorrowingBook from "./views/Staff/BorrowingBook";
+import BookReturn from "./views/Staff/BookReturn";
+import Library from "./views/library";
+import bookSearch from "./views/bookSearch";
+import NewBookStorage from "./views/Staff/NewBookStorage";
+import ChangePassword2 from "./views/Staff/ChangePassword";
+import InfoShow2 from "./views/Staff/InfoShow";
+import UpdateStaff from "./views/Staff/UpdateStaff";
 Vue.use(Router);
 
 const router = new Router({
@@ -29,6 +36,12 @@ const router = new Router({
       path: "/",
       redirect: "/index"
     },
+    {
+      path: "/library",
+      name: "Library",
+      component: Library
+    },
+    { path: "/bookSearch", name: "bookSearch", component: bookSearch },
     {
       path: "/index",
       component: Index,
@@ -83,9 +96,28 @@ const router = new Router({
       path: "/staff",
       component: StaffIndex,
       children: [
-        { path: "", component: Home },
-        { path: "/home", name: "home", component: Home },
-        { path: "/borrowingBook", name: "BorrowingBook", component: BorrowingBook },
+        {
+          path: "borrowingBook",
+          name: "BorrowingBook",
+          component: BorrowingBook
+        },
+        {
+          path: "bookReturn",
+          name: "BookReturn",
+          component: BookReturn
+        },
+        {
+          path: "newBookStorage",
+          name: "newBookStorage",
+          component: NewBookStorage
+        },
+        {
+          path: "changePassword2",
+          name: "ChangePassword2",
+          component: ChangePassword2
+        },
+        { path: "infoshow2", name: "infoshow2", component: InfoShow2 },
+        { path: "updateStaff", name: "UpdateStaff", component: UpdateStaff }
       ]
     },
     {
@@ -113,11 +145,17 @@ router.beforeEach((to, from, next) => {
     to.path === "/user/login" ||
     to.path === "/user/register" ||
     to.path === "/staff/login" ||
-    to.path === "/staff/register"
+    to.path === "/staff/register" ||
+    to.path === "/library" ||
+    to.path === "/bookSearch"
   ) {
     next();
   } else {
-    isLogin ? next() : next("/user/login");
+    isLogin
+      ? next()
+      : to.path.includes("staff")
+      ? next("/staff/login")
+      : next("/user/login");
   }
 });
 

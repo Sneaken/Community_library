@@ -10,7 +10,7 @@
       >
         <template v-for="item in items">
           <router-link :to="item.path">
-            <el-menu-item v-if="!item.children" index="0">
+            <el-menu-item v-if="!item.children" :index="item.path">
               <i :class="'fa fa-margin ' + item.icon"></i>
               <span slot="title">{{ item.name }}</span>
             </el-menu-item>
@@ -46,22 +46,22 @@ export default {
                   {
                       icon: "el-icon-view",
                       name: "借阅图书",
-                      path: "borrowingBooks",
+                      path: "/staff/borrowingBook",
                   },
                   {
                       icon: "el-icon-menu",
                       name: "图书归还",
-                      path: "compensationOverdueInquiry"
+                      path: "/staff/bookReturn"
                   },
                   {
                       icon: "el-icon-menu",
                       name: "新书入库",
-                      path: "compensationOverdueInquiry"
+                      path: "/staff/newBookStorage"
                   },
                   {
                       icon: "el-icon-edit",
                       name: "修改密码",
-                      path: "changePassword"
+                      path: "/staff/changePassword2"
                   }
               ]
           };
@@ -76,19 +76,19 @@ export default {
                   {
                       icon: "el-icon-menu",
                       name: "注销读者",
-                      path: "compensationOverdueInquiry",
+                      path: "logoutReader",
                   },
                   // 重置读者密码
                   {
                       icon: "el-icon-menu",
                       name: "重置读者密码",
-                      path: "compensationOverdueInquiry",
+                      path: "resetReaderPassword",
                   },
                   // 查看读者所有信息
                   {
                       icon: "el-icon-view",
                       name: "查看读者信息",
-                      path: "compensationOverdueInquiry",
+                      path: "viewReaderInformation",
                   },
                   {
                       icon: "el-icon-edit",

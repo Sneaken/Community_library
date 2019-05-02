@@ -27,7 +27,7 @@ require('./config/passport')(passport);
 app.use('/api/user', usersRouter);
 app.use('/api/admin',adminRouter);
 app.use('/api/staff',staffRouter);
-app.use('api/generalPurpose',generalRouter);
+app.use('/api/generalPurpose',generalRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

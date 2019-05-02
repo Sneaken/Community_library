@@ -41,7 +41,6 @@
 <script>
     export default {
         name: "register",
-        components: {},
         data () {
             const validatePhone = (rule, value, callback) => {
                 const reg = /^[1][3-8][0-9]{9}$/;

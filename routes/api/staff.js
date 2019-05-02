@@ -11,8 +11,9 @@ const User = require("../../models/user");
 const BookBorrow = require("../../models/book_borrow");
 const BookReturn = require("../../models/book_return");
 const BookStorage = require("../../models/book_storage");
+const BookInfo = require("../../models/book_info");
 const BookReservate = require("../../models/book_reservate");
-
+const TopCategory = require("../../models/top_category");
 //员工注册
 router.post("/register", (req, res) => {
   const staff = req.body;
@@ -85,6 +86,54 @@ router.post("/login", (req, res) => {
     }
   });
 });
+
+//获取用户信息
+router.get(
+  "/getUser",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    console.log(req);
+    Staff.findOne({
+      where: {
+        id_number: req.user.id_number
+      }
+    }).then(result => {
+      res.json(result);
+    });
+  }
+);
+
+//更新用户信息 手机号 或者 邮箱
+router.post(
+  "/updateStaff",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const staffInfo = req.body;
+    Staff.update(
+      {
+        phone: staffInfo.phone
+      },
+      {
+        where: {
+          id_number: staffInfo.id_number
+        }
+      }
+    )
+      .then(() => {
+        res.json({
+          success: true,
+          msg: "修改成功！"
+        });
+      })
+      .catch(error => {
+        console.log(error);
+        res.json({
+          success: false,
+          msg: "修改失败,请重试！"
+        });
+      });
+  }
+);
 
 //图书借阅
 router.post(
@@ -216,7 +265,7 @@ router.post(
 //图书归还
 router.post(
   "/returningBook",
-  // passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   (req, res) => {
     let book_label = req.body.book_label;
     let isOverdue = false;
@@ -229,8 +278,8 @@ router.post(
           },
           transaction: t
         }).then(result => {
-          const reader_number = result.reader_number;
           if (result) {
+            const reader_number = result.reader_number;
             const days = result.should_still_return_time - new Date();
             // console.log (days);
             if (days > 0) {
@@ -284,7 +333,7 @@ router.post(
                         id_number: reader_number
                       }
                     }
-                  )
+                  );
                 });
               });
             }
@@ -300,6 +349,74 @@ router.post(
         res.json({
           success: true,
           msg: isOverdue ? "逾期归还成功！" : "归还成功！"
+        });
+      })
+      .catch(err => {
+        // Transaction 会自动回滚
+        // err 是事务回调中使用promise链中的异常结果
+        console.log(err);
+        res.json({
+          success: false,
+          msg: err.message
+        });
+      });
+  }
+);
+
+//新书入库
+router.post(
+  "/newBookStorage",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const bookInfo = req.body;
+    return sequelize
+      .transaction(function(t) {
+        return BookInfo.findOne({
+          where: {
+            ssh: bookInfo.ssh
+          },
+          transaction: t
+        }).then(result => {
+          if (!result) {
+            return TopCategory.findOne({
+              where: {
+                classify_id: bookInfo.ssh[0]
+              }
+            }).then(result => {
+                console.log (result);
+                return BookInfo.create(
+                {
+                  ssh: bookInfo.ssh,
+                  ztm: bookInfo.ztm,
+                  zrz: bookInfo.zrz,
+                  isbn: bookInfo.isbn,
+                  price: bookInfo.price,
+                  cbs: bookInfo.cbs,
+                  datestr: bookInfo.datestr,
+                  content: bookInfo.content,
+                  category_id: result.id,
+                  pages: bookInfo.pages,
+                  reserve: bookInfo.reserve
+                },
+                {
+                  transaction: t
+                }
+              ).then(result => {
+                console.log(result);
+              });
+            });
+          } else {
+            throw new Error("该图书已存在！");
+          }
+        });
+      })
+      .then(result => {
+        // Transaction 会自动提交
+        // console.log(result.length)
+        console.log(result);
+        res.json({
+          success: true,
+          msg: "入库成功！"
         });
       })
       .catch(err => {

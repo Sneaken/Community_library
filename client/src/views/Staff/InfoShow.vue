@@ -1,32 +1,16 @@
 <template>
   <div class="infoShow">
     <el-row>
-      <el-col :span="6"><div class="user-item">读者证号(身份证)：</div></el-col>
+      <el-col :span="6"><div class="user-item">身份证：</div></el-col>
       <el-col :span="6" :offset="6"><div class="user-item">{{ user.id_number }}</div></el-col>
     </el-row>
     <el-row>
       <el-col :span="6" ><div class="user-item">手机号：</div></el-col>
-      <el-col :span="6" :offset="6"><div class="user-item">{{ user.phone }}</div></el-col>
+      <el-col :span="6" :offset="6"><div class="user-item">{{ user.staff_phone }}</div></el-col>
     </el-row>
     <el-row>
       <el-col :span="6" ><div class="user-item">姓名：</div></el-col>
       <el-col :span="6" :offset="6"><div class="user-item">{{ user.name }}</div></el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6" ><div class="user-item">邮箱：</div></el-col>
-      <el-col :span="6" :offset="6"><div class="user-item">{{ user.email }}</div></el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6" ><div class="user-item">押金：</div></el-col>
-      <el-col :span="6" :offset="6"><div class="user-item">{{ user.deposit }}</div></el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6" ><div class="user-item">状态：</div></el-col>
-      <el-col :span="6" :offset="6"><div class="user-item">{{ user.status }}</div></el-col>
-    </el-row>
-    <el-row v-if="user.end_time">
-      <el-col :span="6" ><div class="user-item">结束吊销时间：</div></el-col>
-      <el-col :span="6" :offset="6"><div class="user-item">{{ user.end_time }}</div></el-col>
     </el-row>
     <el-row>
       <el-button type="primary" @click="updateUser">编辑个人资料</el-button>
@@ -48,7 +32,7 @@
         methods: {
             getProfile () {
                 this.$axios
-                    .get ("/api/user/getUser")
+                    .get ("/api/staff/getUser")
                     .then (res => {
                         this.user = res.data;
                     })
@@ -57,7 +41,7 @@
                     });
             },
             updateUser(){
-                this.$router.push('/updateUser');
+                this.$router.push('/updateStaff');
             }
         }
     };

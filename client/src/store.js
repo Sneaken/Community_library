@@ -11,7 +11,8 @@ const types = {
 export default new Vuex.Store ({
     state: {
         isAuthenticated: false,
-        user: {}
+        user: {},
+        showLoginModal:true
     },
     getters: {
         isAuthenticated: state => state.isAuthenticated,
@@ -31,7 +32,10 @@ export default new Vuex.Store ({
             } else {
                 state.user = {};
             }
-        }
+        },
+        changeshowLoginModal (state, payload) {
+            state.showLoginModal = payload;
+        },
     },
     actions: {
         setAuthenticated: ({commit}, isAuthenticated) => {

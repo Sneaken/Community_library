@@ -34,7 +34,7 @@ const bookInfo = sequelize.define(
       allowNull: false
     },
     content: {
-      type: Sequelize.DataTypes.STRING(255),
+      type: Sequelize.DataTypes.TEXT,
       allowNull: true
     },
     category_id: {
