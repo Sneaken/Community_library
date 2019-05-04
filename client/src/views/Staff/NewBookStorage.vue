@@ -134,8 +134,6 @@ export default {
           this.$axios
             .post("/api/staff/newBookStorage", this.bookInfoForm)
             .then(res => {
-              this.results = res.data.results;
-              console.log(res.data);
               if (res.data.success) {
                 this.$message({
                   message: res.data.msg,

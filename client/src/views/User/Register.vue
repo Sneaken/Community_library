@@ -134,8 +134,6 @@
                         this.$axios
                             .post('/api/user/register',this.registerForm)
                             .then(res=>{
-                                this.results = res.data.results;
-                                console.log (res.data);
                                 if(res.data.success){
                                     //注册成功
                                     this.$message({

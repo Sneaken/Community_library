@@ -23,7 +23,7 @@ const bookStorage = sequelize.define(
       allowNull: false
     },
     status: {
-      type: Sequelize.DataTypes.ENUM("库本", "在库", "借出", "已预约"),
+      type: Sequelize.DataTypes.ENUM("库本", "在库", "借出"),
       allowNull: false,
       defaultValue: "在库"
     },
@@ -34,6 +34,10 @@ const bookStorage = sequelize.define(
         model: "user",
         key: "id_number"
       }
+    },
+    reservation: {
+      type: Sequelize.DataTypes.INTEGER(1),
+      allowNull: true
     }
   },
   {

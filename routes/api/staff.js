@@ -14,6 +14,8 @@ const BookStorage = require("../../models/book_storage");
 const BookInfo = require("../../models/book_info");
 const BookReservate = require("../../models/book_reservate");
 const TopCategory = require("../../models/top_category");
+const BookCompensation = require("../../models/book_compensation");
+
 //员工注册
 router.post("/register", (req, res) => {
   const staff = req.body;
@@ -383,8 +385,8 @@ router.post(
                 classify_id: bookInfo.ssh[0]
               }
             }).then(result => {
-                console.log (result);
-                return BookInfo.create(
+              console.log(result);
+              return BookInfo.create(
                 {
                   ssh: bookInfo.ssh,
                   ztm: bookInfo.ztm,
@@ -428,6 +430,146 @@ router.post(
           msg: err.message
         });
       });
+  }
+);
+
+// 读者注册
+router.post("/registerReader", (req, res) => {
+  const reader = req.body;
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash("00000000", salt, (err, hash) => {
+      if (err) {
+        console.log(err);
+      }
+      User.create({
+        id_number: reader.id_number,
+        password: hash,
+        phone: reader.phone,
+        name: reader.name,
+        deposit: 0.0,
+        book_number: 5,
+        create_time: new Date()
+      })
+        .then(() => {
+          res.json({
+            success: true,
+            msg: "注册成功！"
+          });
+        })
+        .catch(function(err) {
+          // console.log(err);
+          if (err.parent.errno === 1062) {
+            res.json({
+              success: false,
+              msg: "用户已注册！"
+            });
+          }
+        });
+    });
+  });
+});
+
+//重置读者密码
+router.post(
+  "/resetReaderPassword",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    let id_number = req.body.id_number;
+    User.findOne({
+      where: {
+        id_number
+      }
+    }).then(result => {
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash("00000000", salt, (err, hash) => {
+          if (err) {
+            console.log(err);
+          }
+          User.update({ password: hash }, { where: { id_number } })
+            .then(result => {
+              if (result[0] === 1) {
+                res.json({ success: true, msg: "修改成功！" });
+              } else if (result[0] === 0) {
+                res.json({ success: false, msg: "修改失败！" });
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        });
+      });
+    });
+  }
+);
+
+//注销读者
+router.post(
+  "/deleteReader",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    let id_number = req.body.id_number;
+    User.findOne({
+      where: {
+        id_number
+      }
+    }).then(result => {
+      if (!result) {
+        res.json({
+          success: false,
+          msg: "查无此人！销户失败！"
+        });
+      }
+
+      if (result.status === "挂失") {
+        res.json({ success: false, msg: "读者证已挂失，销户失败！" });
+      }
+      if (result.status === "交罚金") {
+        res.json({
+          success: false,
+          msg: "读者证尚有罚金未缴纳，请先缴纳！销户失败！"
+        });
+      }
+      if (result.status === "吊销期") {
+        res.json({ success: false, msg: "读者处于吊销期，销户失败！" });
+      }
+      if (result.book_number !== 5) {
+        res.json({ success: false, msg: "读者尚有图书暂未归还，销户失败！" });
+      }
+      //6 * 30 * 24 * 3600 * 1000
+      if (new Date() - result.create_time < 15552000000) {
+        res.json({
+          success: false,
+          msg: "读者办理借阅证尚未满6个月，销户失败！"
+        });
+      }
+      return sequelize.transaction(function(t) {
+        return BookStorage.update(
+          { reservation: 0, appointment_of_reader_number: null },
+          {
+            where: {
+              appointment_of_reader_number: id_number
+            },
+            transaction: t
+          }
+        )
+          .then(() => {
+            return User.destroy({
+              where: {
+                id_number
+              },
+              transaction: t
+            }).then(() => {
+              res.json({ success: true, msg: "销户成功！" });
+            });
+          })
+          .catch(err => {
+            res.json({
+              success: false,
+              msg: err.message
+            });
+          });
+      });
+    });
   }
 );
 

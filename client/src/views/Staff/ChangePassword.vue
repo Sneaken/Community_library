@@ -94,10 +94,8 @@ export default {
           this.$axios
             .post("/api/user/changePassword", this.ruleForm2)
             .then(res => {
-              this.results = res.data.results;
-              console.log(res.data);
               if (res.data.success) {
-                //注册成功
+                //修改密码成功
                 this.$message({
                   message: res.data.msg,
                   type: "success"

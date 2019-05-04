@@ -54,6 +54,7 @@ export default {
             this.$router.push("/infoShow");
 
         }
+
     },
     logout() {
         if (this.$store.getters.user.identity) {

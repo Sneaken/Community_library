@@ -26,6 +26,9 @@ import NewBookStorage from "./views/Staff/NewBookStorage";
 import ChangePassword2 from "./views/Staff/ChangePassword";
 import InfoShow2 from "./views/Staff/InfoShow";
 import UpdateStaff from "./views/Staff/UpdateStaff";
+import ResetReaderPassword from "./views/Staff/ResetReaderPassword";
+import ReaderRegistration from "./views/Staff/ReaderRegistration";
+import DeleteReader from "./views/Staff/DeleteReader";
 Vue.use(Router);
 
 const router = new Router({
@@ -117,7 +120,22 @@ const router = new Router({
           component: ChangePassword2
         },
         { path: "infoshow2", name: "infoshow2", component: InfoShow2 },
-        { path: "updateStaff", name: "UpdateStaff", component: UpdateStaff }
+        { path: "updateStaff", name: "UpdateStaff", component: UpdateStaff },
+        {
+          path: "resetReaderPassword",
+          name: "resetReaderPassword",
+          component: ResetReaderPassword
+        },
+        {
+          path: "readerRegistration",
+          name: "readerRegistration",
+          component: ReaderRegistration
+        },
+        {
+          path:"deleteReader",
+          name:"deleteReader",
+          component:DeleteReader
+        }
       ]
     },
     {

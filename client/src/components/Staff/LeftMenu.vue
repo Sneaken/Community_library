@@ -71,29 +71,27 @@ export default {
                   {
                       icon: "el-icon-view",
                       name: "读者注册",
-                      path: "borrowingManagement",
+                      path: "/staff/readerRegistration",
                   },
                   {
                       icon: "el-icon-menu",
                       name: "注销读者",
-                      path: "logoutReader",
+                      path: "/staff/deleteReader",
                   },
-                  // 重置读者密码
                   {
-                      icon: "el-icon-menu",
+                      icon: "el-icon-edit",
                       name: "重置读者密码",
-                      path: "resetReaderPassword",
+                      path: "/staff/resetReaderPassword",
                   },
-                  // 查看读者所有信息
                   {
                       icon: "el-icon-view",
                       name: "查看读者信息",
-                      path: "viewReaderInformation",
+                      path: "/staff/viewReaderInformation",
                   },
                   {
                       icon: "el-icon-edit",
                       name: "修改密码",
-                      path: "changePassword"
+                      path: "/staff/changePassword2"
                   }
               ]
           };

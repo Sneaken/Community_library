@@ -41,8 +41,6 @@
                         this.$axios
                             .post ("/api/staff/returningBook", this.ruleForm2)
                             .then (res => {
-                                this.results = res.data.results;
-                                console.log (res.data);
                                 if (res.data.success) {
                                     //归还成功
                                     this.$message ({

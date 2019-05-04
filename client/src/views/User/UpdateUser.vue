@@ -79,7 +79,6 @@ export default {
           this.$axios
             .post("/api/user/updateUser", this.ruleForm2)
             .then(res => {
-              this.results = res.data.results;
               if (res.data.success) {
                 this.$message({
                   message: res.data.msg,

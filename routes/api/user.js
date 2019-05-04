@@ -161,7 +161,7 @@ router.post(
                 if (err) {
                   console.log(err);
                 }
-                console.log(hash);
+                // console.log(hash);
                 user
                   .update(
                     { password: hash },

@@ -1,39 +1,22 @@
 <template>
-  <el-form
-    :model="ruleForm2"
-    status-icon
-    :rules="rules2"
-    ref="ruleForm2"
-    label-width="100px"
-    class="demo-ruleForm"
-  >
-    <el-form-item label="书标号" prop="book_label">
-      <el-input
-        type="text"
-        v-model="ruleForm2.book_label"
-        autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item label="读者证号" prop="reader_number">
-      <el-input
-        type="text"
-        v-model="ruleForm2.reader_number"
-        autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submitForm('ruleForm2')"
-      >提交
-      </el-button
-      >
-      <el-button @click="resetForm('ruleForm2')">重置</el-button>
-    </el-form-item>
-  </el-form>
+  <div>
+    <div class="form_container">
+      <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="80px"
+               class="Form">
+        <el-form-item label="身份证号" prop="id_number">
+          <el-input v-model="Form.id_number" placeholder="请输入身份证号"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('Form')" class="submit_btn">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
 </template>
 
 <script>
     export default {
-        name: "BorrowingBooks",
+        name: "DeleteReader",
         data () {
             const validateIdNumber = (rule, value, callback) => {
                 // 1 "验证通过!", 0 //校验不通过
@@ -66,40 +49,45 @@
                 }
                 callback ();
             };
+            const validateName = (rule, value, callback) => {
+                const reg = /^[\u4e00-\u9fa5]{2,5}$/;
+                if (!reg.test (value)) {
+                    callback (new Error ('请输入中文姓名'));
+                } else {
+                    callback ();
+                }
+            };
             return {
-                ruleForm2: {
-                    book_label: "",
-                    reader_number: "",
+                Form: {
+                    id_number: '',
                 },
-                rules2: {
-                    reader_number: [
+                rules: {
+                    id_number: [
+                        {required: true, message: '身份证号不能为空', trigger: 'blur'},
                         {validator: validateIdNumber, trigger: 'blur'}
-                    ]
+                    ],
                 }
             };
         },
         methods: {
             submitForm (formName) {
-                this.$refs[formName].validate (valid => {
+                this.$refs[formName].validate ((valid) => {
                     if (valid) {
                         this.$axios
-                            .post ("/api/staff/borrowingBook", this.ruleForm2)
-                            .then (res => {
-                                if (res.data.success) {
-                                    //借阅成功
-                                    this.$message ({
-                                        message: res.data.msg,
-                                        type: "success"
+                            .post('/api/staff/deleteReader',this.Form)
+                            .then(res=>{
+                                if(res.data.success){
+                                    //读者注销成功
+                                    this.$message({
+                                        message:res.data.msg,
+                                        type:'success'
                                     });
-                                } else {
-                                    this.$message.error (res.data.msg);
+                                }else{
+                                    this.$message.error(res.data.msg);
                                 }
                             });
                     }
                 });
-            },
-            resetForm (formName) {
-                this.$refs[formName].resetFields ();
             }
         }
     }

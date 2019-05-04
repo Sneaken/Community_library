@@ -3,7 +3,9 @@
     <HeadNav></HeadNav>
     <LeftMenu></LeftMenu>
     <div class="rightContainer">
+      <keep-alive>
       <router-view></router-view>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -23,7 +25,7 @@
 
 <style scoped>
   .index {
-    height: 100%;
+    /*height: 100%;*/
     overflow: hidden;
   }
   .rightContainer {
