@@ -29,6 +29,8 @@ import UpdateStaff from "./views/Staff/UpdateStaff";
 import ResetReaderPassword from "./views/Staff/ResetReaderPassword";
 import ReaderRegistration from "./views/Staff/ReaderRegistration";
 import DeleteReader from "./views/Staff/DeleteReader";
+import ViewReaderInformation from "./views/Staff/ViewReaderInformation";
+import ViewReader from "./views/Staff/ViewReader";
 Vue.use(Router);
 
 const router = new Router({
@@ -132,9 +134,19 @@ const router = new Router({
           component: ReaderRegistration
         },
         {
-          path:"deleteReader",
-          name:"deleteReader",
-          component:DeleteReader
+          path: "deleteReader",
+          name: "deleteReader",
+          component: DeleteReader
+        },
+        {
+          path: "viewReader",
+          name: "viewReader",
+          component: ViewReader
+        },
+        {
+          path: "viewReaderInformation",
+          name: "viewReaderInformation",
+          component: ViewReaderInformation
         }
       ]
     },

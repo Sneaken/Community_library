@@ -559,7 +559,7 @@ router.post(
               },
               transaction: t
             }).then(() => {
-              res.json({ success: true, msg: "销户成功！" });
+              res.json({ success: true, msg: "销户成功！请退押金！" });
             });
           })
           .catch(err => {
@@ -569,6 +569,32 @@ router.post(
             });
           });
       });
+    });
+  }
+);
+
+// 查询读者信息
+router.post(
+  "/viewReaderInformation",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const id_number = req.body.id_number;
+    User.findOne({
+      where: {
+        id_number
+      }
+    }).then(result => {
+      if (result) {
+        res.json({
+          success: true,
+          data: result
+        });
+      } else {
+        res.json({
+          success: false,
+          msg: "查无此人！"
+        });
+      }
     });
   }
 );

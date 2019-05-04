@@ -86,7 +86,7 @@ export default {
                   {
                       icon: "el-icon-view",
                       name: "查看读者信息",
-                      path: "/staff/viewReaderInformation",
+                      path: "/staff/viewReader",
                   },
                   {
                       icon: "el-icon-edit",

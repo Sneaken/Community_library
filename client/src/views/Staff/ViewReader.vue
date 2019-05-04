@@ -1,20 +1,20 @@
 <template>
-    <div class="form_container">
-      <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="80px"
-               class="Form">
-        <el-form-item label="身份证号" prop="id_number">
-          <el-input v-model="Form.id_number" placeholder="请输入身份证号"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('Form')" class="submit_btn">提交</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+  <div class="form_container">
+    <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="80px"
+             class="Form">
+      <el-form-item label="身份证号" prop="id_number">
+        <el-input v-model="Form.id_number" placeholder="请输入身份证号"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('Form')" class="submit_btn">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
 <script>
     export default {
-        name: "DeleteReader",
+        name: "ViewReader",
         data () {
             const validateIdNumber = (rule, value, callback) => {
                 // 1 "验证通过!", 0 //校验不通过
@@ -63,19 +63,8 @@
             submitForm (formName) {
                 this.$refs[formName].validate ((valid) => {
                     if (valid) {
-                        this.$axios
-                            .post('/api/staff/deleteReader',this.Form)
-                            .then(res=>{
-                                if(res.data.success){
-                                    //读者注销成功
-                                    this.$message({
-                                        message:res.data.msg,
-                                        type:'success'
-                                    });
-                                }else{
-                                    this.$message.error(res.data.msg);
-                                }
-                            });
+                        this.$router.push({ path: '/staff/viewReaderInformation', query: { id_number:this.Form.id_number}});
+                        this.Form.id_number='';
                     }
                 });
             }
