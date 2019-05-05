@@ -31,7 +31,7 @@ const user = sequelize.define(
       allowNull: true
     },
     status: {
-      type: Sequelize.DataTypes.ENUM("正常", "挂失", "交罚金", '吊销期'),
+      type: Sequelize.DataTypes.ENUM("正常", "交罚金", "吊销期"),
       allowNull: false,
       defaultValue: "正常"
     },
@@ -47,6 +47,11 @@ const user = sequelize.define(
     end_time: {
       type: Sequelize.DataTypes.DATE,
       allowNull: true
+    },
+    loss: {
+      type: Sequelize.DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: 0
     }
   },
   {

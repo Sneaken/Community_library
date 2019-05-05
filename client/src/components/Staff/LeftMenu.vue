@@ -79,6 +79,11 @@ export default {
                       path: "/staff/deleteReader",
                   },
                   {
+                      icon: "el-icon-menu",
+                      name: "挂失/解除挂失",
+                      path: "/staff/loss",
+                  },
+                  {
                       icon: "el-icon-edit",
                       name: "重置读者密码",
                       path: "/staff/resetReaderPassword",

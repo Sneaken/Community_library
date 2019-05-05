@@ -234,12 +234,12 @@ router.post(
                 throw new Error("该图书已借出");
               }
             });
-          } else if (result.status === "挂失") {
-            throw new Error("读者证已挂失，请读者前去服务台取消挂失！");
           } else if (result.status === "交罚金") {
             throw new Error("读者号上有处罚金，请前往服务台缴纳！");
           } else if (result.status === "吊销期") {
             throw new Error("读者证已吊销，时间尚未结束！");
+          } else if (result.loss === 1) {
+            throw new Error("读者证已挂失，请读者前去服务台取消挂失！");
           }
         });
       })
@@ -520,9 +520,6 @@ router.post(
         });
       }
 
-      if (result.status === "挂失") {
-        res.json({ success: false, msg: "读者证已挂失，销户失败！" });
-      }
       if (result.status === "交罚金") {
         res.json({
           success: false,
@@ -541,6 +538,9 @@ router.post(
           success: false,
           msg: "读者办理借阅证尚未满6个月，销户失败！"
         });
+      }
+      if (result.loss === 1) {
+        res.json({ success: false, msg: "读者证已挂失，销户失败！" });
       }
       return sequelize.transaction(function(t) {
         return BookStorage.update(
@@ -597,6 +597,72 @@ router.post(
       }
     });
   }
+);
+
+// 读者 挂失
+router.post(
+    "/reportLoss",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const id_number = req.body.id_number;
+      User.findOne({
+        where: {
+          id_number
+        }
+      }).then(result => {
+        if (result) {
+          User.update({ loss: 1 }, { where: { id_number } })
+              .then(result => {
+                if (result[0] === 1) {
+                  res.json({ success: true, msg: "挂失成功！" });
+                } else if (result[0] === 0) {
+                  res.json({ success: false, msg: "挂失失败！" });
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
+        } else {
+          res.json({
+            success: false,
+            msg: "查无此人！"
+          });
+        }
+      });
+    }
+);
+
+// 读者 解除挂失
+router.post(
+    "/releaseTheLoss",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const id_number = req.body.id_number;
+      User.findOne({
+        where: {
+          id_number
+        }
+      }).then(result => {
+        if (result) {
+          User.update({ loss: 0 }, { where: { id_number } })
+              .then(result => {
+                if (result[0] === 1) {
+                  res.json({ success: true, msg: "解除挂失成功！" });
+                } else if (result[0] === 0) {
+                  res.json({ success: false, msg: "解除挂失失败！" });
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
+        } else {
+          res.json({
+            success: false,
+            msg: "查无此人！"
+          });
+        }
+      });
+    }
 );
 
 module.exports = router;

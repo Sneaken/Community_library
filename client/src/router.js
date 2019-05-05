@@ -31,6 +31,7 @@ import ReaderRegistration from "./views/Staff/ReaderRegistration";
 import DeleteReader from "./views/Staff/DeleteReader";
 import ViewReaderInformation from "./views/Staff/ViewReaderInformation";
 import ViewReader from "./views/Staff/ViewReader";
+import Loss from "./views/Staff/Loss";
 Vue.use(Router);
 
 const router = new Router({
@@ -147,6 +148,11 @@ const router = new Router({
           path: "viewReaderInformation",
           name: "viewReaderInformation",
           component: ViewReaderInformation
+        },
+        {
+          path: "loss",
+          name: "loss",
+          component: Loss
         }
       ]
     },

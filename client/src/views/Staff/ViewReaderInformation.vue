@@ -24,6 +24,13 @@
       <el-col :span="6" ><div class="user-item">状态：</div></el-col>
       <el-col :span="6" :offset="6"><div class="user-item">{{ user.status }}</div></el-col>
     </el-row>
+    <el-row>
+      <el-col :span="6" ><div class="user-item">是否挂失</div></el-col>
+      <el-col :span="6" :offset="6">
+        <div class="user-item" v-if="user.loss===1">是</div>
+        <div class="user-item" v-if="user.loss===0">否</div>
+      </el-col>
+    </el-row>
     <el-row v-if="user.end_time">
       <el-col :span="6" ><div class="user-item">结束吊销时间：</div></el-col>
       <el-col :span="6" :offset="6"><div class="user-item">{{ user.end_time }}</div></el-col>
@@ -49,6 +56,13 @@
                     .then (res => {
                         if (res.data.success){
                             this.user = res.data.data;
+                            for (let key of this.user) {
+                                if(this.user[key]===null){
+                                    if(key!=='end_time'){
+                                        this.user[key]='无';
+                                    }
+                                }
+                            }
                         }else{
                             this.user={};
                             this.$message.error (res.data.msg);
