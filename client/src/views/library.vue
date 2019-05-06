@@ -2,44 +2,58 @@
   <!-- <div class="component-index" :style="{'padding-bottom': footerHeight}"> -->
   <div class="component-index">
     <!-- header -->
-<!--    <header class="header">-->
-<!--      <site-header></site-header>-->
-      <!-- 搜索 -->
-<!--      <search></search>-->
-<!--    </header>-->
+    <!--    <header class="header">-->
+    <!--      <site-header></site-header>-->
+    <router-link to="user/login">我的图书馆</router-link>
+
+    <!--       搜索-->
+    <search class="search"></search>
+    <!--    </header>-->
 
     <!-- 主内容 -->
     <router-view></router-view>
-    <!-- 非主内容, 如Modal等 -->
-    <router-link to="user/login">我的图书馆</router-link>
-
-<!--    &lt;!&ndash;侧部信息 &ndash;&gt;-->
-<!--    <lib-info></lib-info>-->
 
     <!-- footer -->
-<!--    <footer class="footer">-->
-<!--      <site-footer></site-footer>-->
-<!--    </footer>-->
+    <footer class="footer">
+      <site-footer></site-footer>
+    </footer>
   </div>
 </template>
 
 <script>
-    import search from '../components/search';      // 搜索框
-    import Login from '../views/User/Login';  // 用户登录Modal
-    // import siteHeader from '../components/header';      // 页头
-    // import libInfo from '../components/libInfo';      // 侧部信息
+import search from "../components/search"; // 搜索框
+import Login from "../views/User/Login"; // 用户登录Modal
+import siteFooter from "../components/footer";
 
-    export default {
-        name: "index",
-        components: {
-            search,
-            Login,
-            // siteHeader,
-            // libInfo,
-        },
-    }
+export default {
+  name: "index",
+  components: {
+    search,
+    Login,
+    siteFooter
+    // siteHeader,
+    // libInfo,
+  }
+};
 </script>
 
 <style scoped>
-
+.search {
+  width: 800px;
+  margin: 250px auto;
+}
+.component-index {
+  height: 750px;
+  background-color: #3498db;
+}
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 250px;
+  padding-left: 150px;
+  background-color: aliceblue;
+  z-index: 9999;
+}
 </style>

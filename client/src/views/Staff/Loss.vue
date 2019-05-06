@@ -5,6 +5,9 @@
       <el-form-item label="身份证号" prop="id_number">
         <el-input v-model="Form.id_number" placeholder="请输入身份证号"></el-input>
       </el-form-item>
+      <el-form-item label="姓名" prop="name">
+        <el-input v-model="Form.name" placeholder="请输入姓名"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('Form',0)" class="submit_btn">挂失</el-button>
         <el-button type="primary" @click="submitForm('Form',1)" class="submit_btn">解除挂失</el-button>
@@ -48,14 +51,27 @@
                 }
                 callback ();
             };
+            const validateName = (rule, value, callback) => {
+                const reg = /^[\u4e00-\u9fa5]{2,5}$/;
+                if (!reg.test (value)) {
+                    callback (new Error ('请输入中文姓名'));
+                } else {
+                    callback ();
+                }
+            };
             return {
                 Form: {
                     id_number: '',
+                    name:''
                 },
                 rules: {
                     id_number: [
                         {required: true, message: '身份证号不能为空', trigger: 'blur'},
                         {validator: validateIdNumber, trigger: 'blur'}
+                    ],
+                    name: [
+                        {required: true, message: '姓名不能为空', trigger: 'blur'},
+                        {validator: validateName, trigger: 'blur'}
                     ],
                 }
             };

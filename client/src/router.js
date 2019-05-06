@@ -40,14 +40,14 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      redirect: "/index"
+      redirect: "/library"
     },
     {
       path: "/library",
       name: "Library",
-      component: Library
+      component: Library,
     },
-    { path: "/bookSearch", name: "bookSearch", component: bookSearch },
+    { path: "/library/bookSearch", name: "bookSearch", component: bookSearch },
     {
       path: "/index",
       component: Index,

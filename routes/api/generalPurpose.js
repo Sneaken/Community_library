@@ -11,11 +11,10 @@ router.get ("/find", (req, res) => {
     BookInfo.findAll ({
         where: {
             ztm: {
-                [Op.like]: '%' + book.ztm + '%'
+                [Op.like]: '%' + book.input + '%'
             }
         }
     }).then(result=>{
-        // console.log (result);
         if (result.length){
             res.json({
                 success:true,

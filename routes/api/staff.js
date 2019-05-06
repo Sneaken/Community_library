@@ -605,9 +605,11 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       const id_number = req.body.id_number;
+      const name = req.body.name;
       User.findOne({
         where: {
-          id_number
+          id_number,
+          name
         }
       }).then(result => {
         if (result) {
@@ -638,9 +640,11 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       const id_number = req.body.id_number;
+      const name = req.body.name;
       User.findOne({
         where: {
-          id_number
+          id_number,
+          name
         }
       }).then(result => {
         if (result) {
