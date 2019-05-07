@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "element-ui": "^2.6.3",
+    "element-ui": "^2.8.2",
     "jwt-decode": "^2.2.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",

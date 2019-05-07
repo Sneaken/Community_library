@@ -69,7 +69,7 @@ export default {
 </script>
 <style scoped>
 .component-footer {
-  width: 90%;
+  width: 100%;
   font-size: 16px;
   line-height: 25px;
 }

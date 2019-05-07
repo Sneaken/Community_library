@@ -1,14 +1,14 @@
 <template>
   <!-- <div class="component-index" :style="{'padding-bottom': footerHeight}"> -->
   <div class="component-index">
-    <!-- header -->
-    <!--    <header class="header">-->
-    <!--      <site-header></site-header>-->
-    <router-link to="user/login">我的图书馆</router-link>
+    <!--     header -->
+    <header class="header">
+      <!--      <site-header></site-header>-->
+      <router-link to="user/login">我的图书馆</router-link>
+    </header>
 
     <!--       搜索-->
     <search class="search"></search>
-    <!--    </header>-->
 
     <!-- 主内容 -->
     <router-view></router-view>
@@ -31,8 +31,6 @@ export default {
     search,
     Login,
     siteFooter
-    // siteHeader,
-    // libInfo,
   }
 };
 </script>
@@ -44,8 +42,10 @@ export default {
 }
 .component-index {
   height: 750px;
-  background-color: #3498db;
+  background: linear-gradient(180deg, #3498db, white);
+  /*background-color: #3498db;*/
 }
+
 .footer {
   position: fixed;
   left: 0;
