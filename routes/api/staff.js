@@ -156,7 +156,7 @@ router.post(
           if (result.status === "正常") {
             return BookStorage.findOne({
               where: {
-                label: book_label
+                book_label
                 // status: '在库'
               },
               transaction: t
@@ -168,7 +168,7 @@ router.post(
                   },
                   {
                     where: {
-                      label: book_label,
+                      book_label,
                       status: "在库"
                     },
                     transaction: t //注意（事务transaction 须和where同级）second parameter is "options", so transaction must be in it
@@ -196,7 +196,7 @@ router.post(
                     },
                     {
                       where: {
-                        label: book_label,
+                        book_label,
                         status: "已预约"
                       },
                       transaction: t //注意（事务transaction 须和where同级）second parameter is "options", so transaction must be in it

@@ -10,7 +10,7 @@
       <ul class="search-result-lists">
         <li v-for="item in bookResult" :key="item.ssh" class="row">
           <router-link
-            :to="{ path: item.skipUrl }"
+            :to="{path: '/library/bookInfo', query: {ssh:item.ssh}}"
             target="_blank"
             class="link"
           >
@@ -115,7 +115,7 @@ export default {
   methods: {
     getBookList() {
       this.$axios
-        .get("/api/generalPurpose/find", {
+        .get("/api/generalPurpose/findBook", {
           params: {
             input: this.$route.query.input,
             select: this.$route.query.select
@@ -179,8 +179,6 @@ export default {
 </script>
 
 <style scoped>
-.continer {
-}
 
 .search {
   width: 800px;

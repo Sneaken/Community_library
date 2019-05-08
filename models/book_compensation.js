@@ -24,7 +24,7 @@ const bookCompensation = sequelize.define(
       allowNull: false,
       references: {
         model: "book_storage",
-        key: "label"
+        key: "book_label"
       }
     },
     status: {

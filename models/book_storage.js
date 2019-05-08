@@ -13,7 +13,7 @@ const bookStorage = sequelize.define(
         key: "ssh"
       }
     },
-    label: {
+    book_label: {
       type: Sequelize.DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true

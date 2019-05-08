@@ -71,8 +71,8 @@ router.post("/login", (req, res) => {
               phone: result.phone,
               name: result.name
             };
-            //token 时长10分钟
-            jwt.sign(rule, "secret", { expiresIn: 24 * 3600 }, (err, token) => {
+            //token 时长8小时
+            jwt.sign(rule, "secret", { expiresIn: 8 * 3600 }, (err, token) => {
               if (err) {
                 console.log(err);
               }
@@ -233,7 +233,7 @@ router.post(
       .query(
         "SELECT book_borrow.book_label, book_info.ztm, book_borrow.borrow_time, book_borrow.should_still_return_time, book_borrow.renewal_time, book_borrow.number_of_renewals, book_borrow.`status` \n" +
           "FROM book_borrow, book_storage, book_info \n" +
-          "WHERE book_borrow.reader_number = ?  AND book_borrow.book_label = book_storage.label AND book_storage.ssh = book_info.ssh",
+          "WHERE book_borrow.reader_number = ?  AND book_borrow.book_label = book_storage.book_label AND book_storage.ssh = book_info.ssh",
         {
           replacements: [req.user.id_number],
           type: sequelize.QueryTypes.SELECT
@@ -257,7 +257,7 @@ router.post(
       .query(
         "SELECT book_return.book_label, book_info.ztm, book_return.borrow_time, book_return.return_time, book_return.`status` \n" +
           "FROM book_return, book_info, book_storage \n" +
-          "WHERE book_return.reader_number = ?  AND book_storage.label = book_return.book_label AND book_storage.ssh = book_info.ssh",
+          "WHERE book_return.reader_number = ?  AND book_storage.book_label = book_return.book_label AND book_storage.ssh = book_info.ssh",
         {
           replacements: [req.user.id_number],
           type: sequelize.QueryTypes.SELECT
@@ -281,7 +281,7 @@ router.post(
       .query(
         "SELECT book_return.book_label, book_info.ztm, book_return.borrow_time, book_return.return_time, book_return.`status` \n" +
           "FROM book_return, book_info, book_storage \n" +
-          "WHERE book_return.reader_number = ?  AND book_return.status != '正常' AND book_storage.label = book_return.book_label AND book_storage.ssh = book_info.ssh",
+          "WHERE book_return.reader_number = ?  AND book_return.status != '正常' AND book_storage.book_label = book_return.book_label AND book_storage.ssh = book_info.ssh",
         {
           replacements: [req.user.id_number],
           type: sequelize.QueryTypes.SELECT
@@ -305,7 +305,7 @@ router.post(
       .query(
         "SELECT book_compensation.book_label, book_info.ztm, book_compensation.time, book_compensation.money, book_compensation.`status` \n" +
           "FROM book_compensation, book_info, book_storage \n" +
-          "WHERE book_compensation.reader_number = ?  AND book_storage.label = book_compensation.book_label AND book_storage.ssh = book_info.ssh",
+          "WHERE book_compensation.reader_number = ?  AND book_storage.book_label = book_compensation.book_label AND book_storage.ssh = book_info.ssh",
         {
           replacements: [req.user.id_number],
           type: sequelize.QueryTypes.SELECT
@@ -329,7 +329,7 @@ router.post(
       .query(
         "SELECT book_reservate.book_label,book_info.ztm,book_reservate.time_of_appointment,book_reservate.ending_time_of_appointment\n" +
           "FROM book_reservate, book_storage, book_info \n" +
-          "WHERE book_reservate.reader_number = ?  AND book_reservate.book_label = book_storage.label AND book_storage.ssh = book_info.ssh",
+          "WHERE book_reservate.reader_number = ?  AND book_reservate.book_label = book_storage.book_label AND book_storage.ssh = book_info.ssh",
         {
           replacements: [req.user.id_number],
           type: sequelize.QueryTypes.SELECT

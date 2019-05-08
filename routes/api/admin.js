@@ -76,7 +76,7 @@ router.post ("/login", (req, res) => {
 router.post ("/borrow", (req, res) => {
     const sql_reader =
         'SELECT book_number, status FROM USER WHERE reader_number = ?';
-    const sql_book = 'SELECT `状态` FROM book_storage WHERE label = ?';
+    const sql_book = 'SELECT `状态` FROM book_storage WHERE book_label = ?';
     const params = req.body;
 
     pool.getConnection (function (err, connection) {

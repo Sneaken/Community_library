@@ -32,6 +32,7 @@ import DeleteReader from "./views/Staff/DeleteReader";
 import ViewReaderInformation from "./views/Staff/ViewReaderInformation";
 import ViewReader from "./views/Staff/ViewReader";
 import Loss from "./views/Staff/Loss";
+import BookInfo from "./views/BookInfo";
 Vue.use(Router);
 
 const router = new Router({
@@ -48,6 +49,7 @@ const router = new Router({
       component: Library,
     },
     { path: "/library/bookSearch", name: "bookSearch", component: bookSearch },
+    { path: "/library/bookInfo", name: "bookInfo", component: BookInfo },
     {
       path: "/index",
       component: Index,

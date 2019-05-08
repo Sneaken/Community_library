@@ -31,7 +31,7 @@ const book_reservate = sequelize.define(
       allowNull: true,
       references: {
         model: "book_storage",
-        key: "label"
+        key: "book_label"
       },
       unique: true
     }

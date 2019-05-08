@@ -23,7 +23,7 @@ const bookBorrow = sequelize.define(
       allowNull: false,
       references: {
         model: "book_storage",
-        key: "label"
+        key: "book_label"
       }
     },
     borrow_time: {

@@ -43,7 +43,7 @@ axios.interceptors.response.use (response => {
         //清除token
         localStorage.removeItem('eleToken');
         //跳转到登录页面
-        router.push('/login');
+        router.push('/staff/login');
     }
     return Promise.reject (error);
 
