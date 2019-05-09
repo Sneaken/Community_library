@@ -57,7 +57,7 @@ export default {
       this.$axios
         .post("/api/user/bookReservationManagement")
         .then(res => {
-          this.tableData = res.data;
+          this.tableData = res.data.data;
           this.tableData.forEach((value, index, array) => {
             array[index].time_of_appointment = this.renderTime(
               value.time_of_appointment

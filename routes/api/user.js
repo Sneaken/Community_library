@@ -244,6 +244,7 @@ router.post(
       })
       .catch(err => {
         console.log(err);
+        res.json({ success: false, msg: "" + err });
       });
   }
 );
@@ -268,6 +269,7 @@ router.post(
       })
       .catch(err => {
         console.log(err);
+        res.json({ success: false, msg: "" + err });
       });
   }
 );
@@ -292,6 +294,7 @@ router.post(
       })
       .catch(err => {
         console.log(err);
+        res.json({ success: false, msg: "" + err });
       });
   }
 );
@@ -316,6 +319,7 @@ router.post(
       })
       .catch(err => {
         console.log(err);
+        res.json({ success: false, msg: "" + err });
       });
   }
 );
@@ -336,11 +340,71 @@ router.post(
         }
       )
       .then(result => {
-        res.json(result);
+        res.json({ success: true, msg: "预约查询成功！", data: result });
       })
       .catch(err => {
-        console.log(err);
+        res.json({ success: false, msg: "预约查询失败！" + err });
       });
+  }
+);
+
+//图书预约
+router.post(
+  "/bookReservation",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    return sequelize.transaction(function(t) {
+      return bookStorage
+        .findOne({
+          where: {
+            book_label: req.body.book_label
+          },
+          transaction: t
+        })
+        .then(result => {
+          if (result.status === "库本") {
+            throw new Error("库本无法预约！");
+          }
+
+          if (result.reservation) {
+            throw new Error("该图书已被预约！");
+          }
+          return bookReservate
+            .create(
+              {
+                reader_number: req.user.id_number,
+                book_label: req.body.book_label,
+                time_of_appointment: new Date(),
+                ending_time_of_appointment:
+                  new Date().getTime() + 7 * 24 * 3600 * 1000
+              },
+              {
+                transaction: t
+              }
+            )
+            .then(() => {
+              return bookStorage
+                .update(
+                  {
+                    reservation: 1
+                  },
+                  {
+                    where: {
+                      book_label: req.body.book_label
+                    },
+                    transaction: t
+                  }
+                )
+                .then(() => {
+                  res.json({ success: true, msg: "预约成功！" });
+                });
+            });
+        })
+        .catch(err => {
+          console.log(err);
+          res.json({ success: false, msg: "预约失败！" + err.message });
+        });
+    });
   }
 );
 
@@ -349,21 +413,36 @@ router.post(
   "/cancelRenewal",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    bookReservate
-      .destroy({
-        where: {
-          book_label: req.body.book_label,
-          reader_number: req.user.id_number
-        }
-      })
-      .then(result => {
-        console.log(result);
-        res.json({ success: true, msg: "取消预约成功！" });
-      })
-      .catch(error => {
-        console.log(error);
-        res.json({ success: false, msg: "取消预约失败！请重试！" });
-      });
+    return sequelize.transaction(function(t) {
+      return bookReservate
+        .destroy({
+          where: {
+            book_label: req.body.book_label,
+            reader_number: req.user.id_number
+          },
+          transaction: t
+        })
+        .then(() => {
+          return bookStorage
+            .update(
+              {
+                reservation: 0
+              },
+              {
+                where: {
+                  book_label: req.body.book_label
+                },
+                transaction: t
+              }
+            )
+            .then(() => {
+              res.json({ success: true, msg: "取消预约成功！" });
+            });
+        })
+        .catch(() => {
+          res.json({ success: false, msg: "取消预约失败！请重试！" });
+        });
+    });
   }
 );
 

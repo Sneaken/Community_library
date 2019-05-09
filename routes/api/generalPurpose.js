@@ -41,30 +41,12 @@ router.get("/findBook", (req, res) => {
   });
 });
 
+//获取图书的详细信息
 router.get("/getBookInfo", (req, res) => {
   const ssh = req.query.ssh;
-
-  // BookInfo.hasMany(BookStorage, { foreignKey: "ssh" });
-  // BookStorage.belongsTo(BookInfo, { foreignKey: "ssh" });
-  //
-  // BookStorage.hasOne(BookBorrow, { foreignKey: "book_label", as: 'should_still_return_time'});
-  // BookBorrow.belongsTo(BookStorage, { foreignKey: "book_label" });
-  // BookInfo.findAll({
-  //   attributes: { exclude: ["reserve", "category_id"] },
-  //   where: {
-  //     ssh
-  //   },
-  //   include: [
-  //     {
-  //       model: BookStorage,
-  //       attributes:{ exclude: ["ssh"] },
-  //       include: [{model: BookBorrow,as: 'should_still_return_time',attributes: ['should_still_return_time']}],
-  //       required: false
-  //     }
-  //   ]
   sequelize
     .query(
-      "SELECT `book_info`.`ssh`, `book_info`.`ztm`, `book_info`.`zrz`, `book_info`.`isbn`, `book_info`.`price` , `book_info`.`cbs`, `book_info`.`datestr`, `book_info`.`content`, `book_info`.`pages`, `book_storages`.`book_label` , `book_storages`.`collection_place`, `book_storages`.`status`, `book_storages`.`appointment_of_reader_number`, `book_storages`.`reservation`, `book_storages->should_still_return_time`.`id` , `book_storages->should_still_return_time`.`should_still_return_time` FROM `book_info` `book_info` LEFT JOIN `book_storage` `book_storages` ON `book_info`.`ssh` = `book_storages`.`ssh` LEFT JOIN `book_borrow` `book_storages->should_still_return_time` ON `book_storages`.`book_label` = `book_storages->should_still_return_time`.`book_label` WHERE `book_info`.`ssh` = ?",
+      "SELECT `book_info`.`ssh`, `book_info`.`ztm`, `book_info`.`zrz`, `book_info`.`isbn`, `book_info`.`price` , `book_info`.`cbs`, `book_info`.`datestr`, `book_info`.`content`, `book_info`.`pages`, `book_storage`.`book_label` , `book_storage`.`collection_place`, `book_storage`.`status`, `book_storage`.`reservation`, `book_borrow`.`should_still_return_time`, `book_reservate`.time_of_appointment , `book_reservate`.`ending_time_of_appointment` FROM `book_info` LEFT JOIN `book_storage` ON `book_info`.`ssh` = `book_storage`.`ssh` LEFT JOIN `book_borrow` ON `book_storage`.`book_label` = `book_borrow`.`book_label` LEFT JOIN `book_reservate` ON `book_borrow`.`book_label` = `book_reservate`.`book_label` WHERE `book_info`.`ssh` = ?",
       { replacements: [ssh], type: sequelize.QueryTypes.SELECT }
     )
     .then(result => {
@@ -80,19 +62,27 @@ router.get("/getBookInfo", (req, res) => {
           pages: result[0].pages,
           book_storage: []
         };
-        let obj = {book_info};
+        let obj = { book_info, book_reservate: [] };
 
         result.forEach(item => {
-          if(item.book_label){
+          if (item.book_label) {
             let oo = {
               book_label: item.book_label,
               collection_place: item.collection_place,
               status: item.status,
-              appointment_of_reader_number: item.appointment_of_reader_number,
               reservation: item.reservation,
               should_still_return_time: item.should_still_return_time
             };
-            obj.book_info.book_storage.push(oo);
+            obj.book_info.book_storage.unshift(oo);
+            if (item.reservation) {
+              let ox = {
+                book_label: item.book_label,
+                collection_place: item.collection_place,
+                time_of_appointment: item.time_of_appointment,
+                ending_time_of_appointment: item.ending_time_of_appointment
+              };
+              obj.book_reservate.unshift(ox);
+            }
           }
         });
         res.json({

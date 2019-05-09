@@ -62,33 +62,28 @@
                 height="250"
                 style="width: 100%"
               >
-                <el-table-column
-                  align="center"
-                  label="复本／藏书记录"
-                >
+                <el-table-column align="center" label="复本／藏书记录">
+                  <el-table-column prop="book_label" label="条码号" width="180">
+                  </el-table-column>
+                  <el-table-column prop="status" label="状态">
+                  </el-table-column>
                   <el-table-column
-                    prop="storage.label"
-                    label="条码号"
-                    width="180"
+                    prop="should_still_return_time"
+                    label="应还日期"
+                    :formatter="renderTime"
                   >
                   </el-table-column>
-                  <el-table-column prop="ssh" label="索书号"> </el-table-column>
-                  <el-table-column prop="storage.status" label="状态">
+                  <el-table-column prop="collection_place" label="典藏地">
                   </el-table-column>
-                  <el-table-column prop="address" label="应还日期">
+                  <el-table-column prop="reservation" label="预约">
+                    <template slot-scope="scope">
+                      <el-button size="mini" @click="handleEdit(scope.row)"
+                        >预约</el-button
+                      >
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="address" label="典藏地">
-                  </el-table-column>
-                  <el-table-column prop="address" label="预约"> </el-table-column>
                 </el-table-column>
               </el-table>
-
-              <!--            &lt;!&ndash; 无数据提示 &ndash;&gt;-->
-              <!--            <none-data-->
-              <!--              v-if="!book.book_storage.length"-->
-              <!--              msg="暂无馆藏信息"-->
-              <!--              :custom-style="{ 'padding-top': '15px' }"-->
-              <!--            ></none-data>-->
             </div>
           </div>
 
@@ -100,22 +95,24 @@
             </h2>
           </div>
           <!-- 预约信息 -->
-          <el-table :data="book.book_storage" height="250" style="width: 100%">
-            <el-table-column prop="date" label="条码号" width="180">
+          <el-table :data="book_reservate" height="250" style="width: 100%">
+            <el-table-column prop="book_label" label="条码号" width="180">
             </el-table-column>
-            <el-table-column prop="name" label="馆藏单位" width="180">
+            <el-table-column prop="collection_place" label="典藏地" width="180">
             </el-table-column>
-            <el-table-column prop="address" label="典藏地"> </el-table-column>
-            <el-table-column prop="address" label="典藏地"> </el-table-column>
-            <el-table-column prop="address" label="典藏地"> </el-table-column>
+            <el-table-column
+              prop="time_of_appointment"
+              label="预约时间"
+              :formatter="renderTime"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="ending_time_of_appointment"
+              label="解约时间"
+              :formatter="renderTime"
+            >
+            </el-table-column>
           </el-table>
-
-          <!--        &lt;!&ndash; 无数据提示 &ndash;&gt;-->
-          <!--        <none-data-->
-          <!--          v-if="!book.book_storage.length"-->
-          <!--          msg="暂无馆藏信息"-->
-          <!--          :custom-style="{ 'padding-top': '15px' }"-->
-          <!--        ></none-data>-->
         </div>
       </div>
     </div>
@@ -133,7 +130,8 @@ export default {
   name: "BookInfo",
   data() {
     return {
-      book: {}
+      book: {},
+      book_reservate: []
     };
   },
   components: {
@@ -144,6 +142,32 @@ export default {
     this.getBookInfo();
   },
   methods: {
+    renderTime(date) {
+      if (date.should_still_return_time) {
+        return new Date(
+          new Date(date.should_still_return_time).getTime() + 16 * 3600 * 1000
+        )
+          .toISOString()
+          .replace(/T/g, " ")
+          .replace(/\.[\d]{3}Z/, "");
+      } else if (date.time_of_appointment) {
+        return new Date(
+          new Date(date.time_of_appointment).getTime() + 16 * 3600 * 1000
+        )
+          .toISOString()
+          .replace(/T/g, " ")
+          .replace(/\.[\d]{3}Z/, "");
+      } else if (date.ending_time_of_appointment) {
+        return new Date(
+          new Date(date.ending_time_of_appointment).getTime() + 16 * 3600 * 1000
+        )
+          .toISOString()
+          .replace(/T/g, " ")
+          .replace(/\.[\d]{3}Z/, "");
+      } else {
+        return "";
+      }
+    },
     getBookInfo() {
       this.$axios
         .get("/api/generalPurpose/getBookInfo", {
@@ -154,10 +178,29 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.book = res.data.data.book_info;
+            this.book_reservate = res.data.data.book_reservate;
           } else {
             this.book = {};
+            this.book_reservate = {};
           }
         });
+    },
+    handleEdit(row) {
+      this.$axios
+        .post("/api/user/bookReservation", {
+          book_label: row.book_label
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.$message({
+              message: res.data.msg,
+              type: "success"
+            });
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      this.getBookInfo();
     }
   }
 };
@@ -187,9 +230,12 @@ export default {
   padding-top: 63px;
 }
 
-.book-about .book-intro-y {
-  width: 700px;
-  margin-top: 10px;
+.book-intro-y {
+  text-indent: 2em;
+  line-height: 20px;
+}
+.book-intro-n {
+  margin-top: 30px;
 }
 .column-title {
   font-size: 18px;

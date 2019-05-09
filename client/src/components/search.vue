@@ -32,9 +32,9 @@ export default {
   data() {
     return {
       Form: {
-        select: "ztm",
+        select: this.$route.query.select || "ztm",
         input: this.$route.query.input || ""
-      },
+      }
     };
   },
   methods: {
@@ -45,7 +45,7 @@ export default {
           query: { select: this.Form.select, input: this.Form.input }
         });
       } else {
-          this.$message.warning('关键词不能为空！');
+        this.$message.warning("关键词不能为空！");
       }
     }
   }

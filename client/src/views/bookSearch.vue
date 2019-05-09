@@ -10,7 +10,7 @@
       <ul class="search-result-lists">
         <li v-for="item in bookResult" :key="item.ssh" class="row">
           <router-link
-            :to="{path: '/library/bookInfo', query: {ssh:item.ssh}}"
+            :to="{ path: '/library/bookInfo', query: { ssh: item.ssh } }"
             target="_blank"
             class="link"
           >
@@ -179,7 +179,6 @@ export default {
 </script>
 
 <style scoped>
-
 .search {
   width: 800px;
   margin: 0 auto;
