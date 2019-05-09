@@ -39,11 +39,22 @@ axios.interceptors.response.use (response => {
     //获取错误状态码
     const {status} = error.response;
     if (status === 401) {
-        Message.error ('token失效，请重新登录！');
-        //清除token
-        localStorage.removeItem('eleToken');
-        //跳转到登录页面
-        router.push('/staff/login');
+        console.log (router.currentRoute);
+        if(router.currentRoute.path){
+            Message.warning ('尚未登录，请先登录！');
+            localStorage.removeItem('eleToken');
+            router.replace({
+                name:"userLogin",
+                query:{redirect:router.currentRoute.fullPath}
+            })
+        }else{
+            Message.error ('token失效，请重新登录！');
+            //清除token
+            localStorage.removeItem('eleToken');
+            //跳转到登录页面
+            router.push('/user/login');
+        }
+
     }
     return Promise.reject (error);
 

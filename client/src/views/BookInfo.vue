@@ -63,19 +63,20 @@
                 style="width: 100%"
               >
                 <el-table-column align="center" label="复本／藏书记录">
-                  <el-table-column prop="book_label" label="条码号" width="180">
+                  <el-table-column prop="book_label" label="条码号" width="180" align="center">
                   </el-table-column>
-                  <el-table-column prop="status" label="状态">
+                  <el-table-column prop="status" label="状态" align="center">
                   </el-table-column>
                   <el-table-column
                     prop="should_still_return_time"
                     label="应还日期"
+                    align="center"
                     :formatter="renderTime"
                   >
                   </el-table-column>
-                  <el-table-column prop="collection_place" label="典藏地">
+                  <el-table-column prop="collection_place" label="典藏地" align="center">
                   </el-table-column>
-                  <el-table-column prop="reservation" label="预约">
+                  <el-table-column prop="reservation" label="预约" align="center">
                     <template slot-scope="scope">
                       <el-button size="mini" @click="handleEdit(scope.row)"
                         >预约</el-button
@@ -95,20 +96,22 @@
             </h2>
           </div>
           <!-- 预约信息 -->
-          <el-table :data="book_reservate" height="250" style="width: 100%">
-            <el-table-column prop="book_label" label="条码号" width="180">
+          <el-table :data="book_reservate" height="250" style="width: 100%" >
+            <el-table-column prop="book_label" label="条码号" width="180" align="center">
             </el-table-column>
-            <el-table-column prop="collection_place" label="典藏地" width="180">
+            <el-table-column prop="collection_place" label="典藏地" width="180" align="center">
             </el-table-column>
             <el-table-column
               prop="time_of_appointment"
               label="预约时间"
+              align="center"
               :formatter="renderTime"
             >
             </el-table-column>
             <el-table-column
               prop="ending_time_of_appointment"
               label="解约时间"
+              align="center"
               :formatter="renderTime"
             >
             </el-table-column>
@@ -142,31 +145,16 @@ export default {
     this.getBookInfo();
   },
   methods: {
-    renderTime(date) {
-      if (date.should_still_return_time) {
+    renderTime(date, column) {
+      if (date[column.property]) {
         return new Date(
-          new Date(date.should_still_return_time).getTime() + 16 * 3600 * 1000
+          new Date(date[column.property]).getTime() + 16 * 3600 * 1000
         )
           .toISOString()
           .replace(/T/g, " ")
           .replace(/\.[\d]{3}Z/, "");
-      } else if (date.time_of_appointment) {
-        return new Date(
-          new Date(date.time_of_appointment).getTime() + 16 * 3600 * 1000
-        )
-          .toISOString()
-          .replace(/T/g, " ")
-          .replace(/\.[\d]{3}Z/, "");
-      } else if (date.ending_time_of_appointment) {
-        return new Date(
-          new Date(date.ending_time_of_appointment).getTime() + 16 * 3600 * 1000
-        )
-          .toISOString()
-          .replace(/T/g, " ")
-          .replace(/\.[\d]{3}Z/, "");
-      } else {
-        return "";
       }
+      return "";
     },
     getBookInfo() {
       this.$axios
@@ -202,7 +190,7 @@ export default {
         });
       this.getBookInfo();
     }
-  }
+  },
 };
 </script>
 
@@ -233,6 +221,7 @@ export default {
 .book-intro-y {
   text-indent: 2em;
   line-height: 20px;
+  word-wrap:break-word;
 }
 .book-intro-n {
   margin-top: 30px;

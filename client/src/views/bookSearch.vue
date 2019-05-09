@@ -237,6 +237,7 @@ export default {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   margin-top: 10px;
+  word-wrap:break-word;
 }
 .book-about .book-intro-n {
   margin-top: 30px;

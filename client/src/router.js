@@ -185,7 +185,8 @@ router.beforeEach((to, from, next) => {
     to.path === "/staff/login" ||
     to.path === "/staff/register" ||
     to.path === "/library" ||
-    to.path === "/bookSearch"
+    to.path === "/library/bookSearch"||
+      to.path === "/library/bookInfo"
   ) {
     next();
   } else {
