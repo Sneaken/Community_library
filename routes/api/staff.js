@@ -13,9 +13,8 @@ const BookReturn = require("../../models/book_return");
 const BookStorage = require("../../models/book_storage");
 const BookInfo = require("../../models/book_info");
 const BookReservate = require("../../models/book_reservate");
-const TopCategory = require("../../models/top_category");
 const BookCompensation = require("../../models/book_compensation");
-
+const Subclassification = require("../../models/subclassification");
 //员工注册
 router.post("/register", (req, res) => {
   const staff = req.body;
@@ -139,48 +138,45 @@ router.post(
 
 //更改密码
 router.post(
-    "/changePassword",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      let staff = req.body;
-      console.log (req.user.id_number);
-      Staff
-          .findOne({
-            where: {
-              id_number: req.user.id_number
-            }
-          })
-          .then(result => {
-            bcrypt.compare(staff.password, result.password).then(isMatch => {
-              if (isMatch) {
-                bcrypt.genSalt(10, function(err, salt) {
-                  bcrypt.hash(staff.pass, salt, (err, hash) => {
-                    if (err) {
-                      console.log(err);
-                    }
-                    Staff
-                        .update(
-                            { password: hash },
-                            { where: { id_number: req.user.id_number } }
-                        )
-                        .then(result => {
-                          if (result[0] === 1) {
-                            res.json({ success: true, msg: "修改成功！" });
-                          } else if (result[0] === 0) {
-                            res.json({ success: false, msg: "修改失败！" });
-                          }
-                        })
-                        .catch(err => {
-                          console.log(err);
-                        });
-                  });
-                });
-              } else {
-                return res.json({ success: false, msg: "原密码错误！" });
+  "/changePassword",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    let staff = req.body;
+    console.log(req.user.id_number);
+    Staff.findOne({
+      where: {
+        id_number: req.user.id_number
+      }
+    }).then(result => {
+      bcrypt.compare(staff.password, result.password).then(isMatch => {
+        if (isMatch) {
+          bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(staff.pass, salt, (err, hash) => {
+              if (err) {
+                console.log(err);
               }
+              Staff.update(
+                { password: hash },
+                { where: { id_number: req.user.id_number } }
+              )
+                .then(result => {
+                  if (result[0] === 1) {
+                    res.json({ success: true, msg: "修改成功！" });
+                  } else if (result[0] === 0) {
+                    res.json({ success: false, msg: "修改失败！" });
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                });
             });
           });
-    }
+        } else {
+          return res.json({ success: false, msg: "原密码错误！" });
+        }
+      });
+    });
+  }
 );
 
 //图书借阅
@@ -323,7 +319,6 @@ router.post(
           if (result) {
             const reader_number = result.reader_number;
             const days = result.should_still_return_time - new Date();
-            // console.log (days);
             if (days > 0) {
               //正常归还
               return BookReturn.create(
@@ -415,19 +410,18 @@ router.post(
           transaction: t
         }).then(result => {
           if (!result) {
-            return TopCategory.findOne({
+            return Subclassification.findOne({
               where: {
-                classify_id: bookInfo.ssh[0]
+                sub_id: bookInfo.sub_id
               }
             }).then(result => {
-              console.log(result);
               return BookInfo.create(
                 {
                   ssh: bookInfo.ssh,
                   ztm: bookInfo.ztm,
                   zrz: bookInfo.zrz,
                   isbn: bookInfo.isbn,
-                  price: bookInfo.price,
+                  price: bookInfo.price + "页",
                   cbs: bookInfo.cbs,
                   datestr: bookInfo.datestr,
                   content: bookInfo.content,
@@ -636,72 +630,108 @@ router.post(
 
 // 读者 挂失
 router.post(
-    "/reportLoss",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      const id_number = req.body.id_number;
-      const name = req.body.name;
-      User.findOne({
-        where: {
-          id_number,
-          name
-        }
-      }).then(result => {
-        if (result) {
-          User.update({ loss: 1 }, { where: { id_number } })
-              .then(result => {
-                if (result[0] === 1) {
-                  res.json({ success: true, msg: "挂失成功！" });
-                } else if (result[0] === 0) {
-                  res.json({ success: false, msg: "挂失失败！" });
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-        } else {
-          res.json({
-            success: false,
-            msg: "查无此人！"
+  "/reportLoss",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const id_number = req.body.id_number;
+    const name = req.body.name;
+    User.findOne({
+      where: {
+        id_number,
+        name
+      }
+    }).then(result => {
+      if (result) {
+        User.update({ loss: 1 }, { where: { id_number } })
+          .then(result => {
+            if (result[0] === 1) {
+              res.json({ success: true, msg: "挂失成功！" });
+            } else if (result[0] === 0) {
+              res.json({ success: false, msg: "挂失失败！" });
+            }
+          })
+          .catch(err => {
+            console.log(err);
           });
-        }
-      });
-    }
+      } else {
+        res.json({
+          success: false,
+          msg: "查无此人！"
+        });
+      }
+    });
+  }
 );
 
 // 读者 解除挂失
 router.post(
-    "/releaseTheLoss",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      const id_number = req.body.id_number;
-      const name = req.body.name;
-      User.findOne({
-        where: {
-          id_number,
-          name
-        }
-      }).then(result => {
-        if (result) {
-          User.update({ loss: 0 }, { where: { id_number } })
-              .then(result => {
-                if (result[0] === 1) {
-                  res.json({ success: true, msg: "解除挂失成功！" });
-                } else if (result[0] === 0) {
-                  res.json({ success: false, msg: "解除挂失失败！" });
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-        } else {
-          res.json({
-            success: false,
-            msg: "查无此人！"
+  "/releaseTheLoss",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const id_number = req.body.id_number;
+    const name = req.body.name;
+    User.findOne({
+      where: {
+        id_number,
+        name
+      }
+    }).then(result => {
+      if (result) {
+        User.update({ loss: 0 }, { where: { id_number } })
+          .then(result => {
+            if (result[0] === 1) {
+              res.json({ success: true, msg: "解除挂失成功！" });
+            } else if (result[0] === 0) {
+              res.json({ success: false, msg: "解除挂失失败！" });
+            }
+          })
+          .catch(err => {
+            console.log(err);
           });
-        }
+      } else {
+        res.json({
+          success: false,
+          msg: "查无此人！"
+        });
+      }
+    });
+  }
+);
+
+// 图书信息修改
+router.post(
+  "/findBook",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const ssh = req.body.ssh;
+    BookInfo.findOne({
+      attributes: [
+        "ssh",
+        "ztm",
+        "zrz",
+        "isbn",
+        "price",
+        "cbs",
+        "datestr",
+        "content",
+        "pages",
+          "reserve"
+      ],
+      where: {
+        ssh
+      }
+    })
+      .then(result => {
+          if (result){
+              res.json({ success: true, msg: "查询成功！", data: result });
+          }else {
+              res.json({ success: false, msg: "暂未查询到相关图书！" });
+          }
+      })
+      .catch(err => {
+        res.json({ success: false, msg: "查询失败！" + err });
       });
-    }
+  }
 );
 
 module.exports = router;

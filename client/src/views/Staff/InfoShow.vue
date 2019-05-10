@@ -53,20 +53,6 @@
     height: 100%;
     box-sizing: border-box;
   }
-
-  .row-bg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .user span {
-    display: block;
-    text-align: center;
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
   .user-item {
     position: relative;
     top: 30%;

@@ -40,68 +40,76 @@
 export default {
   name: "left-menu",
   data() {
-      if (this.$store.getters.user.identity === '图书管理') {
-          return {
-              items: [
-                  {
-                      icon: "el-icon-view",
-                      name: "借阅图书",
-                      path: "/staff/borrowingBook",
-                  },
-                  {
-                      icon: "el-icon-menu",
-                      name: "图书归还",
-                      path: "/staff/bookReturn"
-                  },
-                  {
-                      icon: "el-icon-menu",
-                      name: "新书入库",
-                      path: "/staff/newBookStorage"
-                  },
-                  {
-                      icon: "el-icon-edit",
-                      name: "修改密码",
-                      path: "/staff/changePassword2"
-                  }
-              ]
-          };
-      }else{
-          return {
-              items: [
-                  {
-                      icon: "el-icon-view",
-                      name: "读者注册",
-                      path: "/staff/readerRegistration",
-                  },
-                  {
-                      icon: "el-icon-menu",
-                      name: "注销读者",
-                      path: "/staff/deleteReader",
-                  },
-                  {
-                      icon: "el-icon-menu",
-                      name: "挂失/解除挂失",
-                      path: "/staff/loss",
-                  },
-                  {
-                      icon: "el-icon-edit",
-                      name: "重置读者密码",
-                      path: "/staff/resetReaderPassword",
-                  },
-                  {
-                      icon: "el-icon-view",
-                      name: "查看读者信息",
-                      path: "/staff/viewReader",
-                  },
-                  {
-                      icon: "el-icon-edit",
-                      name: "修改密码",
-                      path: "/staff/changePassword2"
-                  }
-              ]
-          };
-      }
-
+    if (this.$store.getters.user.identity === "图书管理") {
+      return {
+        items: [
+          {
+            icon: "el-icon-view",
+            name: "借阅图书",
+            path: "/staff/borrowingBook"
+          },
+          {
+            icon: "el-icon-menu",
+            name: "图书归还",
+            path: "/staff/bookReturn"
+          },
+          {
+            icon: "el-icon-document-add",
+            name: "新书入库",
+            path: "/staff/newBookStorage"
+          },
+          {
+            icon: "el-icon-edit-outline",
+            name: "图书信息编辑",
+            path: "/staff/bookInformation",
+            children: [
+              { path: "bookInformationEditing", name: "内容修改" },
+              { path: "modificationOfTheCollection", name: "典藏地修改" }
+            ]
+          },
+          {
+            icon: "el-icon-edit",
+            name: "修改密码",
+            path: "/staff/changePassword2"
+          }
+        ]
+      };
+    } else {
+      return {
+        items: [
+          {
+            icon: "el-icon-view",
+            name: "读者注册",
+            path: "/staff/readerRegistration"
+          },
+          {
+            icon: "el-icon-menu",
+            name: "注销读者",
+            path: "/staff/deleteReader"
+          },
+          {
+            icon: "el-icon-menu",
+            name: "挂失/解除挂失",
+            path: "/staff/loss"
+          },
+          {
+            icon: "el-icon-edit",
+            name: "重置读者密码",
+            path: "/staff/resetReaderPassword"
+          },
+          {
+            icon: "el-icon-view",
+            name: "查看读者信息",
+            path: "/staff/viewReader"
+          },
+          {
+            icon: "el-icon-edit",
+            name: "修改密码",
+            path: "/staff/changePassword2"
+          }
+        ]
+      };
+    }
   }
 };
 </script>

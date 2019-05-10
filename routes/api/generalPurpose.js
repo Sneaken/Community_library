@@ -5,8 +5,6 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 const BookInfo = require("../../models/book_info");
-const TopCategory = require("../../models/top_category");
-const Subclassification = require("../../models/subclassification");
 //图书查询
 router.get("/findBook", (req, res) => {
   const keywords = req.query.input;
@@ -50,7 +48,7 @@ router.get("/getBookInfo", (req, res) => {
       { replacements: [ssh], type: sequelize.QueryTypes.SELECT }
     )
     .then(result => {
-      if (result) {
+      if (result[0]) {
         let book_info = {
           ssh: result[0].ssh,
           ztm: result[0].ztm,

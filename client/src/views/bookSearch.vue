@@ -53,7 +53,7 @@
       <none-data v-show="!bookResult.length" msg="请搜索其他关键词"></none-data>
     </div>
     <!-- footer -->
-    <footer :class="{ footer: true, footer1: bookResult.length === 0 }">
+    <footer :class="{ footer: true, footer1: bookResult.length < 3 }">
       <site-footer></site-footer>
     </footer>
   </div>
@@ -67,7 +67,7 @@ export default {
   name: "bookSearch",
   data() {
     return {
-      //         // 搜索结果列表
+      // 搜索结果列表
       bookResult: [], // 图书
       allTableData: [],
       filterTableData: [],

@@ -12,14 +12,9 @@
         <el-input
           type="text"
           v-model="bookInfoForm.ssh"
-          placeholder="请输入索书号"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="二级子分类" prop="sub_id">
-        <el-input
-          type="text"
-          v-model="bookInfoForm.sub_id"
-          placeholder="二级子分类"
+          placeholder="请输入索书号进行查询"
+          @keyup.enter.native="findBook"
+          :disabled="checked"
         ></el-input>
       </el-form-item>
       <el-form-item label="正题名" prop="ztm">
@@ -39,6 +34,7 @@
           type="text"
           v-model="bookInfoForm.isbn"
           placeholder="请输入ISBN号"
+          :disabled="checked"
         ></el-input>
       </el-form-item>
       <el-form-item label="单价" prop="price">
@@ -79,13 +75,17 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="图书数量" prop="reserve">
-        <el-input
-          type="text"
-          v-model.number="bookInfoForm.reserve"
-          placeholder="请输入图书数量"
-        ></el-input>
+        <el-input-number
+          v-model="bookInfoForm.reserve"
+          controls-position="right"
+          :min="1"
+          :max="5"
+        ></el-input-number>
       </el-form-item>
       <el-form-item>
+        <el-button type="primary" @click="findBook" class="submit_btn"
+          >查询</el-button
+        >
         <el-button
           type="primary"
           @click="submitForm('bookInfoForm')"
@@ -100,7 +100,7 @@
 
 <script>
 export default {
-  name: "NewBookStorage",
+  name: "BookInformationEditing",
   data() {
     const validateDate = (rule, value, callback) => {
       const reg = /^[1-2][0-9]{3}$/;
@@ -113,8 +113,8 @@ export default {
       }
       callback();
     };
-    const validateNumber = (rule, value, callback) => {
-      const reg = /^[1-9][0-9]*$/;
+    const validatePage = (rule, value, callback) => {
+      const reg = /^[1-9][0-9]*页?$/;
       if (!reg.test(value)) {
         callback(new Error("请正确输入"));
       }
@@ -125,36 +125,29 @@ export default {
         const isbn10Maybe = /^(?:[0-9]{9}X|[0-9]{10})$/;
         const isbn13Maybe = /^(?:[0-9]{13})$/;
         const factor = [1, 3];
-
         let version =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : "";
         version = String(version);
-
         if (!version) {
           return isISBN(str, 10) || isISBN(str, 13);
         }
-
         const sanitized = str.replace(/[\s-]+/g, "");
         let checksum = 0;
         let i;
-
         if (version === "10") {
           if (!isbn10Maybe.test(sanitized)) {
             return false;
           }
-
           for (i = 0; i < 9; i++) {
             checksum += (i + 1) * sanitized.charAt(i);
           }
-
           if (sanitized.charAt(9) === "X") {
             checksum += 10 * 10;
           } else {
             checksum += 10 * sanitized.charAt(9);
           }
-
           if (checksum % 11 === 0) {
             return !!sanitized;
           }
@@ -162,25 +155,22 @@ export default {
           if (!isbn13Maybe.test(sanitized)) {
             return false;
           }
-
           for (i = 0; i < 12; i++) {
             checksum += factor[i % 2] * sanitized.charAt(i);
           }
-
           if (sanitized.charAt(12) - ((10 - (checksum % 10)) % 10) === 0) {
             return !!sanitized;
           }
         }
-
         return false;
       }
-
       if (!isISBN(value)) {
         callback(new Error("请正确输入ISBN"));
       }
       callback();
     };
     return {
+      checked: false,
       bookInfoForm: {
         ssh: "",
         sub_id: "",
@@ -213,20 +203,29 @@ export default {
         cbs: [{ required: true, message: "出版方不能为空", trigger: "blur" }],
         pages: [
           { required: true, message: "页码不能为空", trigger: "blur" },
-          { validator: validateNumber, trigger: "blur" }
-        ],
-          reserve: [
-              { validator: validateNumber, trigger: "blur" }
-          ]
+          { validator: validatePage, trigger: "blur" }
+        ]
       }
     };
   },
   methods: {
+    findBook() {
+      this.$axios
+        .post("/api/staff/findBook", { ssh: this.bookInfoForm.ssh })
+        .then(res => {
+          if (res.data.success) {
+            this.checked = true;
+            this.bookInfoForm = res.data.data[0];
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios
-            .post("/api/staff/newBookStorage", this.bookInfoForm)
+            .post("/api/staff/findBook", this.bookInfoForm)
             .then(res => {
               if (res.data.success) {
                 this.$message({
@@ -242,6 +241,7 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.checked=false;
     }
   }
 };

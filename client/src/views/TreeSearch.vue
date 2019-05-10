@@ -73,7 +73,6 @@ export default {
       filterTableData: [],
       footer: false,
       checked: false,
-      keywords: this.$route.query.input,
       //需要给分页组件传的信息
       paginations: {
         page_index: 1, // 当前位于哪页
@@ -114,7 +113,6 @@ export default {
         })
         .then(res => {
           if (res.data.success) {
-            // this.bookResult = res.data.data;
             this.allTableData = res.data.data;
             this.filterTableData = res.data.data;
             // 设置分页数据
@@ -179,13 +177,13 @@ export default {
   margin: 50px auto;
 }
 .classify {
-  width: 500px;
-  /*margin: 100px auto;*/
+  width: 470px;
   float: Left;
 }
 .content {
+  position: absolute;
   float: Left;
-  padding-left: 470px;
+  padding-left: 500px;
 }
 .search-result-lists {
   display: inline;
@@ -247,13 +245,15 @@ export default {
   padding-left: 150px;
 }
 .el-tree {
-  position: fixed;
-  top: 50px;
+  /*position: relative;*/
+  /*top: 0;*/
+  z-index:999;
+
 }
-.el-breadcrumb {
-  position: fixed;
-  top: 35px;
-}
+/*.el-breadcrumb {*/
+  /*position: relative;*/
+  /*top: 35px;*/
+/*}*/
   .none-data{
     position: fixed;
     top:250px;

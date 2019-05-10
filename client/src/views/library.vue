@@ -1,9 +1,10 @@
 <template>
   <div class="component-index">
     <!--     header -->
-<!--    <header class="header">-->
-      <router-link to="user/login">我的图书馆</router-link>
-<!--    </header>-->
+    <!--    <header class="header">-->
+    <router-link to="/index">我的图书馆</router-link>
+    <router-link to="library/classifySearch">分类浏览</router-link>
+    <!--    </header>-->
 
     <!--       搜索-->
     <search class="search"></search>
@@ -39,12 +40,13 @@ export default {
   margin: 250px auto;
 }
 .component-index {
-  position:relative;
+  position: relative;
   height: 750px;
   background: linear-gradient(180deg, #3498db, white);
   /*background-color: #3498db;*/
 }
 a {
+  margin-right: 10px;
   text-decoration: none;
 }
 .footer {

@@ -34,6 +34,7 @@ import ViewReader from "./views/Staff/ViewReader";
 import Loss from "./views/Staff/Loss";
 import BookInfo from "./views/BookInfo";
 import TreeSearch from "./views/TreeSearch";
+import BookInformationEditing from "./views/Staff/BookInformationEditing";
 
 Vue.use(Router);
 
@@ -48,11 +49,15 @@ const router = new Router({
     {
       path: "/library",
       name: "Library",
-      component: Library,
+      component: Library
     },
     { path: "/library/bookSearch", name: "bookSearch", component: bookSearch },
     { path: "/library/bookInfo", name: "bookInfo", component: BookInfo },
-    { path: "/library/classifySearch", name: "classifySearch", component: TreeSearch },
+    {
+      path: "/library/classifySearch",
+      name: "classifySearch",
+      component: TreeSearch
+    },
     {
       path: "/index",
       component: Index,
@@ -155,6 +160,17 @@ const router = new Router({
           component: ViewReaderInformation
         },
         {
+          path: "bookInformationEditing",
+          name: "bookInformationEditing",
+          component: BookInformationEditing
+        },
+        {
+          path: "modificationOfTheCollection",
+          name: "modificationOfTheCollection",
+          component: BookInformationEditing
+        },
+        {
+          //挂失
           path: "loss",
           name: "loss",
           component: Loss
@@ -187,9 +203,7 @@ router.beforeEach((to, from, next) => {
     to.path === "/user/register" ||
     to.path === "/staff/login" ||
     to.path === "/staff/register" ||
-    to.path === "/library" ||
-    to.path === "/library/bookSearch"||
-      to.path === "/library/bookInfo"
+    to.path.includes("library")
   ) {
     next();
   } else {

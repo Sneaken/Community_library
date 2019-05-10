@@ -168,8 +168,10 @@ export default {
             this.book = res.data.data.book_info;
             this.book_reservate = res.data.data.book_reservate;
           } else {
-            this.book = {};
-            this.book_reservate = {};
+            // this.book = {};
+            // this.book_reservate = {};
+            this.$message.error(res.data.msg);
+              this.$router.push('/library');
           }
         });
     },
