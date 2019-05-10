@@ -92,7 +92,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios
-            .post("/api/user/changePassword", this.ruleForm2)
+            .post("/api/staff/changePassword", this.ruleForm2)
             .then(res => {
               if (res.data.success) {
                 //修改密码成功

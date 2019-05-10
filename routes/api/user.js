@@ -8,9 +8,7 @@ const sequelize = require("../../config/dbConnect");
 
 const user = require("../../models/user");
 const bookBorrow = require("../../models/book_borrow");
-const bookInfo = require("../../models/book_info");
 const bookStorage = require("../../models/book_storage");
-const bookReturn = require("../../models/book_return");
 const bookReservate = require("../../models/book_reservate");
 
 // 注册用户

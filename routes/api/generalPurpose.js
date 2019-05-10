@@ -5,8 +5,8 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 const BookInfo = require("../../models/book_info");
-const BookStorage = require("../../models/book_storage");
-const BookBorrow = require("../../models/book_borrow");
+const TopCategory = require("../../models/top_category");
+const Subclassification = require("../../models/subclassification");
 //图书查询
 router.get("/findBook", (req, res) => {
   const keywords = req.query.input;
@@ -99,4 +99,28 @@ router.get("/getBookInfo", (req, res) => {
     });
 });
 
+router.post("/getClassifyContent", (req, res) => {
+  sequelize
+    .query(
+      "SELECT `top_category`.`id`,`top_category`.`classify_id`,`top_category`.`classify_name`, `subclassification`.`id` AS `sid`,`subclassification`.`sub_id`, `subclassification`.`sub_name` FROM `top_category` LEFT JOIN `subclassification` ON `top_category`.`classify_id` = `subclassification`.`top_id`",
+      { type: sequelize.QueryTypes.SELECT }
+    )
+    .then(result => {
+      let data = [];
+      result.forEach(item => {
+        data[item.id - 1] = {
+          label: `${item.classify_id} ${item.classify_name}`,
+          children: []
+        };
+      });
+      result.forEach(item => {
+        data[item.id - 1].children.push({ label: `${item.sub_id} ${item.sub_name}`,id:item.sid});
+      });
+
+      res.json({ success: true, data, msg: "获取成功！" });
+    })
+    .catch(err => {
+      res.json({ success: false, data, msg: "获取失败！" + err });
+    });
+});
 module.exports = router;

@@ -41,7 +41,7 @@
                     });
             },
             updateUser(){
-                this.$router.push('/updateStaff');
+                this.$router.push('/staff/updateStaff');
             }
         }
     };

@@ -137,6 +137,52 @@ router.post(
   }
 );
 
+//更改密码
+router.post(
+    "/changePassword",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      let staff = req.body;
+      console.log (req.user.id_number);
+      Staff
+          .findOne({
+            where: {
+              id_number: req.user.id_number
+            }
+          })
+          .then(result => {
+            bcrypt.compare(staff.password, result.password).then(isMatch => {
+              if (isMatch) {
+                bcrypt.genSalt(10, function(err, salt) {
+                  bcrypt.hash(staff.pass, salt, (err, hash) => {
+                    if (err) {
+                      console.log(err);
+                    }
+                    Staff
+                        .update(
+                            { password: hash },
+                            { where: { id_number: req.user.id_number } }
+                        )
+                        .then(result => {
+                          if (result[0] === 1) {
+                            res.json({ success: true, msg: "修改成功！" });
+                          } else if (result[0] === 0) {
+                            res.json({ success: false, msg: "修改失败！" });
+                          }
+                        })
+                        .catch(err => {
+                          console.log(err);
+                        });
+                  });
+                });
+              } else {
+                return res.json({ success: false, msg: "原密码错误！" });
+              }
+            });
+          });
+    }
+);
+
 //图书借阅
 router.post(
   "/borrowingBook",
@@ -244,18 +290,12 @@ router.post(
         });
       })
       .then(result => {
-        // Transaction 会自动提交
-        // console.log(result.length)
-        console.log(result);
         res.json({
           success: true,
           msg: "借阅成功！"
         });
       })
       .catch(err => {
-        // Transaction 会自动回滚
-        // err 是事务回调中使用promise链中的异常结果
-        console.log(err);
         res.json({
           success: false,
           msg: err.message
@@ -345,17 +385,12 @@ router.post(
         });
       })
       .then(() => {
-        // Transaction 会自动提交
-        // console.log(result.length)
-        // console.log (result);
         res.json({
           success: true,
           msg: isOverdue ? "逾期归还成功！" : "归还成功！"
         });
       })
       .catch(err => {
-        // Transaction 会自动回滚
-        // err 是事务回调中使用promise链中的异常结果
         console.log(err);
         res.json({
           success: false,
