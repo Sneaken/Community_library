@@ -85,13 +85,13 @@
         ></el-input>
       </el-form-item>
       <!--      elementui上传图片的upload组件-->
-<!--      <el-form-item label="图片">-->
-<!--        <input-->
-<!--          type="file"-->
-<!--          name="file"-->
-<!--          accept=".jpg, .jpeg, .png"-->
-<!--          @change="uploadAvatar"-->
-<!--        />-->
+      <el-form-item label="图片">
+        <input
+          type="file"
+          name="file"
+          accept=".jpg, .jpeg, .png"
+          @change="uploadAvatar"
+        />
         <!--        <el-upload-->
         <!--          ref="upload"-->
         <!--          action="https://jsonplaceholder.typicode.com/posts/"-->
@@ -100,7 +100,7 @@
         <!--          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
         <!--          <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>-->
         <!--        </el-upload>-->
-<!--      </el-form-item>-->
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -256,34 +256,34 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const formData = new FormData();
-          // if (this.file2) {
-            // formData.append("file", this.file2, this.file2.name);
-            // formData.append("ssh", this.bookInfoForm.ssh);
-            // formData.append("sub_id", this.bookInfoForm.sub_id);
-            // formData.append("ztm", this.bookInfoForm.ztm);
-            // formData.append("zrz", this.bookInfoForm.zrz);
-            // formData.append("isbn", this.bookInfoForm.isbn);
-            // formData.append("price", this.bookInfoForm.price);
-            // formData.append("cbs", this.bookInfoForm.cbs);
-            // formData.append("datestr", this.bookInfoForm.datestr);
-            // formData.append("content", this.bookInfoForm.content);
-            // formData.append("pages", this.bookInfoForm.pages);
-            // formData.append("reserve", this.bookInfoForm.reserve);
-            // this.$axios
-            //   .post("/api/staff/newBookStorage", formData, {
-            //     headers: { "content-type": "multipart/form-data" }
-            //   })
-            //   .then(res => {
-            //     if (res.data.success) {
-            //       this.$message({
-            //         message: res.data.msg,
-            //         type: "success"
-            //       });
-            //     } else {
-            //       this.$message.error(res.data.msg);
-            //     }
-            //   });
-          // } else {
+          if (this.file2) {
+            formData.append("file", this.file2, this.file2.name);
+            formData.append("ssh", this.bookInfoForm.ssh);
+            formData.append("sub_id", this.bookInfoForm.sub_id);
+            formData.append("ztm", this.bookInfoForm.ztm);
+            formData.append("zrz", this.bookInfoForm.zrz);
+            formData.append("isbn", this.bookInfoForm.isbn);
+            formData.append("price", this.bookInfoForm.price);
+            formData.append("cbs", this.bookInfoForm.cbs);
+            formData.append("datestr", this.bookInfoForm.datestr);
+            formData.append("content", this.bookInfoForm.content);
+            formData.append("pages", this.bookInfoForm.pages);
+            formData.append("reserve", this.bookInfoForm.reserve);
+            this.$axios
+              .post("/api/staff/newBookStorage", formData, {
+                headers: { "content-type": "multipart/form-data" }
+              })
+              .then(res => {
+                if (res.data.success) {
+                  this.$message({
+                    message: res.data.msg,
+                    type: "success"
+                  });
+                } else {
+                  this.$message.error(res.data.msg);
+                }
+              });
+          } else {
             this.$axios
               .post("/api/staff/newBookStorage", this.bookInfoForm)
               .then(res => {
@@ -297,7 +297,7 @@ export default {
                 }
               });
           }
-        // }
+        }
       });
     },
     resetForm(formName) {

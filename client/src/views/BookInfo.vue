@@ -13,7 +13,8 @@
           <!-- 图书概览 -->
           <div class="row">
 
-            <el-image  :src="book.img_place" style="width: 120px; height: 173px" v-if="book.img_place" lazy></el-image>
+            <el-image  :src="book.img_place" style="width: 120px; height: 173px" v-if="book.img_place"></el-image>
+<!--            <img :src="book.img_place" alt="" width="120" height="173" v-if="book.img_place" />-->
             <img src="../assets/book.jpg" alt="" width="120" height="173" v-else />
 
             <div class="book-about">

@@ -1,22 +1,22 @@
-// const fs = require("fs");
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const router = express.Router();
-// const multer = require("multer");
+const multer = require("multer");
 const sequelize = require("../../config/dbConnect");
-// const storage = multer.diskStorage({
-  //确定图片存储的位置
-  // destination: function(req, file, cb) {
-  //   cb(null, path.json(process.cwd(),'../publc'));
-  // },
-  //确定图片存储时的名字,注意，如果使用原名，可能会造成再次上传同一张图片的时候的冲突
-  // filename: function(req, file, cb) {
-  //   cb(null, Date.now() + file.originalname);
-  // }
-// });
-// const upload = multer({ storage });
+const storage = multer.diskStorage({
+  // 确定图片存储的位置
+  destination: path.join(__dirname, "../../client/public/upload"),
+  // 确定图片存储时的名字,注意，如果使用原名，可能会造成再次上传同一张图片的时候的冲突
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + file.originalname);
+  }
+});
+const upload = multer({ storage });
+router.use(upload.single("file"));
 const Staff = require("../../models/staff");
 const User = require("../../models/user");
 const BookBorrow = require("../../models/book_borrow");
@@ -224,7 +224,7 @@ router.post(
                       book_label,
                       status: "在库"
                     },
-                    transaction: t //注意（事务transaction 须和where同级）second parameter is "options", so transaction must be in it
+                    transaction: t
                   }
                 ).then(() => {
                   return BookBorrow.create(
@@ -252,7 +252,7 @@ router.post(
                         book_label,
                         status: "已预约"
                       },
-                      transaction: t //注意（事务transaction 须和where同级）second parameter is "options", so transaction must be in it
+                      transaction: t
                     }
                   )
                     .then(() => {
@@ -409,7 +409,6 @@ router.post(
       });
   }
 );
-
 //新书入库
 router.post(
   "/newBookStorage",
@@ -446,6 +445,9 @@ router.post(
                   content: bookInfo.content,
                   category_id: result.id,
                   pages: bookInfo.pages,
+                  img_place: req.file
+                    ? "/upload/" + req.file.filename
+                    : null,
                   reserve: bookInfo.reserve
                 },
                 {
@@ -490,6 +492,14 @@ router.post(
         });
       })
       .catch(err => {
+        if (req.file) {
+          fs.unlink(req.file.path, e => {
+            if (e) {
+              console.log("文件操作失败");
+              throw e;
+            }
+          });
+        }
         console.log(err);
         res.json({
           success: false,

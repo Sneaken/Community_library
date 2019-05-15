@@ -8,9 +8,10 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken ();
 opts.secretOrKey = 'secret';
 module.exports = passport => {
     passport.use (new JwtStrategy (opts, (jwt_payload, done) => {
-        User.findOne ({
+        Staff.findOne ({
             where: {
-                id_number: jwt_payload.id_number
+                id_number: jwt_payload.id_number,
+                identity:jwt_payload.identity
             }
         }).then (user =>{
             if (user){
@@ -19,13 +20,13 @@ module.exports = passport => {
             return done(null,false);
         }).catch(error => {
             console.log (error);
-            Staff.findOne ({
+            User.findOne ({
                 where: {
                     id_number: jwt_payload.id_number
                 }
-            }).then (user2 =>{
+            }).then (user =>{
                 if (user){
-                    return done(null,user2);
+                    return done(null,user);
                 }
                 return done(null,false);
             }).catch(error => {
@@ -34,9 +35,9 @@ module.exports = passport => {
                     where: {
                         username: jwt_payload.username
                     }
-                }).then (user3 =>{
+                }).then (user =>{
                     if (user3){
-                        return done(null,user3);
+                        return done(null,user);
                     }
                     return done(null,false);
                 }).catch(error => {
