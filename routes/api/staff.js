@@ -1,11 +1,22 @@
+// const fs = require("fs");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const router = express.Router();
-
+// const multer = require("multer");
 const sequelize = require("../../config/dbConnect");
-
+// const storage = multer.diskStorage({
+  //确定图片存储的位置
+  // destination: function(req, file, cb) {
+  //   cb(null, path.json(process.cwd(),'../publc'));
+  // },
+  //确定图片存储时的名字,注意，如果使用原名，可能会造成再次上传同一张图片的时候的冲突
+  // filename: function(req, file, cb) {
+  //   cb(null, Date.now() + file.originalname);
+  // }
+// });
+// const upload = multer({ storage });
 const Staff = require("../../models/staff");
 const User = require("../../models/user");
 const BookBorrow = require("../../models/book_borrow");
@@ -331,12 +342,17 @@ router.post(
                 },
                 { transaction: t }
               ).then(() => {
-                return BookBorrow.destroy({
-                  where: {
-                    reader_number,
-                    book_label
-                  },
-                  transaction: t
+                return BookStorage.update(
+                  { status: "在库" },
+                  { where: { book_label }, transaction: t }
+                ).then(() => {
+                  return BookBorrow.destroy({
+                    where: {
+                      reader_number,
+                      book_label
+                    },
+                    transaction: t
+                  });
                 });
               });
             } else {
@@ -352,7 +368,6 @@ router.post(
                 },
                 { transaction: t }
               ).then(() => {
-                // console.log (result);
                 return BookBorrow.destroy({
                   where: {
                     reader_number,
@@ -401,6 +416,9 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const bookInfo = req.body;
+    console.log(bookInfo);
+
+    console.log(req.file.filename);
     return sequelize
       .transaction(function(t) {
         return BookInfo.findOne({
@@ -413,7 +431,8 @@ router.post(
             return Subclassification.findOne({
               where: {
                 sub_id: bookInfo.sub_id
-              }
+              },
+              transaction: t
             }).then(result => {
               return BookInfo.create(
                 {
@@ -421,7 +440,7 @@ router.post(
                   ztm: bookInfo.ztm,
                   zrz: bookInfo.zrz,
                   isbn: bookInfo.isbn,
-                  price: bookInfo.price + "页",
+                  price: bookInfo.price + "元",
                   cbs: bookInfo.cbs,
                   datestr: bookInfo.datestr,
                   content: bookInfo.content,
@@ -432,9 +451,29 @@ router.post(
                 {
                   transaction: t
                 }
-              ).then(result => {
-                console.log(result);
-              });
+              )
+                .then(() => {
+                  let createPromise = [];
+                  for (let i = 1; i <= bookInfo.reserve; i++) {
+                    createPromise.push(
+                      BookStorage.create(
+                        {
+                          ssh: bookInfo.ssh,
+                          book_label: bookInfo.ssh + `#${i}`,
+                          collection_place: "",
+                          status: i === 1 ? "库本" : "在库"
+                        },
+                        {
+                          transaction: t
+                        }
+                      )
+                    );
+                  }
+                  return Promise.all(createPromise);
+                })
+                .then(result => {
+                  console.log(result);
+                });
             });
           } else {
             throw new Error("该图书已存在！");
@@ -451,8 +490,6 @@ router.post(
         });
       })
       .catch(err => {
-        // Transaction 会自动回滚
-        // err 是事务回调中使用promise链中的异常结果
         console.log(err);
         res.json({
           success: false,
@@ -698,7 +735,7 @@ router.post(
   }
 );
 
-// 图书信息修改
+// 图书信息查询
 router.post(
   "/findBook",
   passport.authenticate("jwt", { session: false }),
@@ -714,19 +751,18 @@ router.post(
         "cbs",
         "datestr",
         "content",
-        "pages",
-          "reserve"
+        "pages"
       ],
       where: {
         ssh
       }
     })
       .then(result => {
-          if (result){
-              res.json({ success: true, msg: "查询成功！", data: result });
-          }else {
-              res.json({ success: false, msg: "暂未查询到相关图书！" });
-          }
+        if (result) {
+          res.json({ success: true, msg: "查询成功！", data: result });
+        } else {
+          res.json({ success: false, msg: "暂未查询到相关图书！" });
+        }
       })
       .catch(err => {
         res.json({ success: false, msg: "查询失败！" + err });
@@ -734,4 +770,168 @@ router.post(
   }
 );
 
+//查询图书
+router.post(
+  "/findBook2",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const ssh = req.body.ssh;
+    BookInfo.findOne({
+      attributes: ["ssh", "ztm", "zrz", "isbn"],
+      where: {
+        ssh
+      }
+    })
+      .then(result => {
+        if (result) {
+          BookStorage.findAll({
+            attributes: ["book_label", "collection_place"],
+            where: {
+              ssh
+            }
+          }).then(result2 => {
+            result.dataValues.location = result2;
+            res.json({ success: true, msg: "查询成功！", data: result });
+          });
+        } else {
+          res.json({ success: false, msg: "暂未查询到相关图书！" });
+        }
+      })
+      .catch(err => {
+        res.json({ success: false, msg: "查询失败！" + err });
+      });
+  }
+);
+
+// 图书信息修改
+router.post(
+  "/updateBookInfo",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const bookInfo = req.body;
+    BookInfo.update(
+      {
+        ztm: bookInfo.ztm,
+        zrz: bookInfo.zrz,
+        price: bookInfo.price,
+        cbs: bookInfo.cbs,
+        datestr: bookInfo.datestr,
+        content: bookInfo.content,
+        pages: bookInfo.pages
+      },
+      {
+        where: {
+          ssh: bookInfo.ssh
+        }
+      }
+    )
+      .then(result => {
+        // console.log (result);
+        if (result[0] === 1) {
+          res.json({ success: true, msg: "修改成功！" });
+        } else {
+          res.json({ success: false, msg: "尚未修改任何内容！" });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        res.json({ success: false, msg: "修改失败！" + err });
+      });
+  }
+);
+
+//典藏地修改
+router.post(
+  "/updateBookStorage",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const bookInfo = req.body;
+    new Promise((resolve, reject) => {
+      let createPromise = [];
+      for (let i = 0; i < bookInfo.location.length; i++) {
+        createPromise.push(
+          BookStorage.update(
+            {
+              collection_place: bookInfo.location[i].collection_place
+            },
+            {
+              where: {
+                book_label: bookInfo.location[i].book_label
+              }
+            }
+          )
+        );
+      }
+      Promise.all(createPromise)
+        .then(result => {
+          let ok = false;
+          for (let i = 0; i < result.length; i++) {
+            if (result[i][0] !== 0) {
+              ok = true;
+            }
+          }
+          if (ok) {
+            res.json({ success: true, msg: "修改成功！" });
+          } else {
+            res.json({ success: false, msg: "尚未修改任何内容！" });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          res.json({ success: false, msg: "修改失败！" + err });
+        });
+    });
+  }
+);
+
+//处罚
+router.post(
+  "/punish",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const Form = req.body;
+    BookCompensation.create({
+      reader_number: Form.id_number,
+      book_label: Form.book_label.toUpperCase(),
+      status: "已缴费",
+      money: Form.money,
+      time: new Date()
+    })
+      .then(() => {
+        res.json({
+          success: true,
+          msg: "记录成功"
+        });
+      })
+      .catch(err => {
+        if (err.parent.errno === 1452) {
+          res.json({
+            success: false,
+            msg: "记录失败！书标号错误！"
+          });
+        } else {
+          res.json({
+            success: false,
+            msg: "记录失败！" + err
+          });
+        }
+      });
+  }
+);
+
+// 文件上传测试
+// router.post("/file", upload.single("file"), function(req, res) {
+//   let avatar = req.file;
+//   console.log(avatar);
+//   console.log(req.body);
+//   if (avatar) {
+//     fs.unlink(avatar.path, e => {
+//       if (e) {
+//         console.log("文件操作失败");
+//         throw e;
+//       }
+//     });
+//   }
+//   res.status(200).send("上传成功");
+// });
 module.exports = router;

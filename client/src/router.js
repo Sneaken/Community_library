@@ -35,6 +35,20 @@ import Loss from "./views/Staff/Loss";
 import BookInfo from "./views/BookInfo";
 import TreeSearch from "./views/TreeSearch";
 import BookInformationEditing from "./views/Staff/BookInformationEditing";
+import ModificationOfTheCollection from "./views/Staff/ModificationOfTheCollection";
+import BookCompensation from "./views/Staff/BookCompensation";
+import AdminLogin from "./views/Admin/Login";
+import AdminIndex from "./views/Admin/Index";
+import Punish from "./views/Staff/Punish";
+import StaffRegistration from "./views/Admin/StaffRegistration";
+import DeleteStaff from "./views/Admin/DeleteStaff";
+import StaffChange from "./views/Admin/StaffChange";
+import ChangePassword3 from "./views/Admin/ChangePassword"
+import InformationDevelopment from "./views/Admin/InformationDevelopment";
+import InformationModification from "./views/Admin/InformationModification";
+import libraryInfo from "./views/libraryInfo";
+import libraryInfoList from "./views/libraryInfoList";
+import SSS from "./views/Staff/SSS";
 
 Vue.use(Router);
 
@@ -167,20 +181,56 @@ const router = new Router({
         {
           path: "modificationOfTheCollection",
           name: "modificationOfTheCollection",
-          component: BookInformationEditing
+          component: ModificationOfTheCollection
         },
         {
-          //挂失
+          path: "bookCompensation",
+          name: "bookCompensation",
+          component: BookCompensation
+        },
+        {
+          path: "punish",
+          name: "punish",
+          component: Punish
+        },
+        {
           path: "loss",
           name: "loss",
           component: Loss
-        }
+        },
       ]
+    },
+    {
+      path: "/admin",
+      component: AdminIndex,
+      children: [
+        { path: "staffRegistration", name: "staffRegistration", component: StaffRegistration },
+        { path: "deleteStaff", name: "deleteStaff", component: DeleteStaff },
+        { path: "staffChange", name: "staffChange", component: StaffChange },
+        { path: "informationDevelopment", name: "informationDevelopment", component: InformationDevelopment },
+        { path: "informationModification", name: "informationModification", component: InformationModification },
+        { path: "changePassword", name: "changePassword", component: ChangePassword3 },
+      ]
+    },
+    {
+      path: "/admin/login",
+      name: "adminLogin",
+      component: AdminLogin
     },
     {
       path: "/staff/register",
       name: "register",
       component: Register
+    },
+    {
+      path: "/library/infoList",
+      name: "infoList",
+      component: libraryInfoList
+    },
+    {
+      path: "/library/info",
+      name: "info",
+      component: libraryInfo
     },
     {
       path: "/staff/login",
@@ -191,6 +241,11 @@ const router = new Router({
       path: "*",
       name: "/404",
       component: notFound
+    },
+    {
+      path:'/file',
+      name:'file',
+      component:SSS
     }
   ]
 });
@@ -202,7 +257,8 @@ router.beforeEach((to, from, next) => {
     to.path === "/user/login" ||
     to.path === "/user/register" ||
     to.path === "/staff/login" ||
-    to.path === "/staff/register" ||
+      to.path === "/admin/login" ||
+    to.path === "/staff/register" ||to.path === "/file" ||
     to.path.includes("library")
   ) {
     next();

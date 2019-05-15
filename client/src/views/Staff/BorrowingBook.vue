@@ -72,7 +72,9 @@
                     reader_number: "",
                 },
                 rules2: {
+                    book_label:[{required: true, message: '书标号不能为空', trigger: 'blur'},],
                     reader_number: [
+                        {required: true, message: '身份证号不能为空', trigger: 'blur'},
                         {validator: validateIdNumber, trigger: 'blur'}
                     ]
                 }
@@ -106,5 +108,8 @@
 </script>
 
 <style scoped>
-
+.demo-ruleForm{
+  width: 800px;
+  margin: 50px auto;
+}
 </style>

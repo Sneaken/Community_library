@@ -53,6 +53,11 @@ export default {
             name: "图书归还",
             path: "/staff/bookReturn"
           },
+            {
+                icon: "el-icon-edit",
+                name: "处罚",
+                path: "/staff/punish"
+            },
           {
             icon: "el-icon-document-add",
             name: "新书入库",
@@ -63,8 +68,8 @@ export default {
             name: "图书信息编辑",
             path: "/staff/bookInformation",
             children: [
-              { path: "bookInformationEditing", name: "内容修改" },
-              { path: "modificationOfTheCollection", name: "典藏地修改" }
+              { path: "/staff/bookInformationEditing", name: "内容修改" },
+              { path: "/staff/modificationOfTheCollection", name: "典藏地修改" }
             ]
           },
           {
@@ -116,14 +121,15 @@ export default {
 <style scoped>
 .menu_page {
   position: fixed;
-  top: 71px;
+  top:0;
   left: 0;
   min-height: 100%;
   background-color: #324057;
-  z-index: 99;
+  z-index: 0;
 }
 
 .el-menu {
+  padding-top: 71px;
   border: none;
 }
 

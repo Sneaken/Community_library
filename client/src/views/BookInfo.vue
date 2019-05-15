@@ -12,11 +12,16 @@
         <div>
           <!-- 图书概览 -->
           <div class="row">
-            <img src="../assets/book.jpg" alt="" width="120" height="173" />
+
+            <el-image  :src="book.img_place" style="width: 120px; height: 173px" v-if="book.img_place" lazy></el-image>
+            <img src="../assets/book.jpg" alt="" width="120" height="173" v-else />
 
             <div class="book-about">
               <h3 class="book-name">{{ book.ztm }}</h3>
               <p>索书号: {{ book.ssh }}</p>
+              <p>ISBN: {{ book.isbn }}</p>
+              <p>定价: {{ book.price }}</p>
+              <p>页数: {{ book.pages }}</p>
 
               <!-- 书籍类型 -->
               <div class="book-zrz-cbs">
@@ -205,7 +210,7 @@ export default {
   margin-bottom: 20px;
 }
 .row {
-  padding-bottom: 50px;
+  padding-bottom: 35px;
   border-bottom: 1px solid #e0e5e8;
 }
 .book-about {
@@ -217,7 +222,7 @@ export default {
 }
 .book-about .book-zrz-cbs {
   color: #959ca5;
-  padding-top: 63px;
+  padding-top: 10px;
 }
 
 .book-intro-y {

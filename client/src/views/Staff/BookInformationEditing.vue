@@ -6,7 +6,6 @@
       :rules="rules"
       ref="bookInfoForm"
       label-width="100px"
-      class="registerForm"
     >
       <el-form-item label="索书号" prop="ssh">
         <el-input
@@ -74,14 +73,6 @@
           placeholder="请输入图书页数"
         ></el-input>
       </el-form-item>
-      <el-form-item label="图书数量" prop="reserve">
-        <el-input-number
-          v-model="bookInfoForm.reserve"
-          controls-position="right"
-          :min="1"
-          :max="5"
-        ></el-input-number>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="findBook" class="submit_btn"
           >查询</el-button
@@ -90,7 +81,7 @@
           type="primary"
           @click="submitForm('bookInfoForm')"
           class="submit_btn"
-          >提交</el-button
+          >确认修改</el-button
         >
         <el-button @click="resetForm('bookInfoForm')">重置</el-button>
       </el-form-item>
@@ -110,6 +101,13 @@ export default {
         parseInt(value) < 1900
       ) {
         callback(new Error("请正确输入年份"));
+      }
+      callback();
+    };
+    const validatePrice = (rule, value, callback) => {
+      const reg = /^[1-9][0-9]*\.[0-9]{0,2}元$/;
+      if (!reg.test(value.trim())) {
+        callback(new Error("请正确输入价格 格式 xx.xx元"));
       }
       callback();
     };
@@ -173,22 +171,17 @@ export default {
       checked: false,
       bookInfoForm: {
         ssh: "",
-        sub_id: "",
         ztm: "",
         zrz: "",
         isbn: "",
         price: "",
         cbs: "",
         datestr: "",
-        content: "",
-        pages: "",
-        reserve: 1
+        content: ""||null,
+        pages: ""
       },
       rules: {
         ssh: [{ required: true, message: "索书号不能为空", trigger: "blur" }],
-        sub_id: [
-          { required: true, message: "分类名不能为空", trigger: "blur" }
-        ],
         ztm: [{ required: true, message: "正题名不能为空", trigger: "blur" }],
         zrz: [{ required: true, message: "责任者不能为空", trigger: "blur" }],
         isbn: [
@@ -199,7 +192,10 @@ export default {
           { required: true, message: "出版时间不能为空", trigger: "blur" },
           { validator: validateDate, trigger: "blur" }
         ],
-        price: [{ required: true, message: "单价不能为空", trigger: "blur" }],
+        price: [
+          { required: true, message: "单价不能为空", trigger: "blur" },
+          { validator: validatePrice, trigger: "blur" }
+        ],
         cbs: [{ required: true, message: "出版方不能为空", trigger: "blur" }],
         pages: [
           { required: true, message: "页码不能为空", trigger: "blur" },
@@ -215,7 +211,7 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.checked = true;
-            this.bookInfoForm = res.data.data[0];
+            this.bookInfoForm = res.data.data;
           } else {
             this.$message.error(res.data.msg);
           }
@@ -225,9 +221,18 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios
-            .post("/api/staff/findBook", this.bookInfoForm)
+            .post("/api/staff/updateBookInfo", {
+                ssh:this.bookInfoForm.ssh,
+                ztm:this.bookInfoForm.ztm,
+                zrz:this.bookInfoForm.zrz,
+                price:this.bookInfoForm.price,
+                cbs:this.bookInfoForm.cbs,
+                datestr:this.bookInfoForm.datestr,
+                content:this.bookInfoForm.content,
+                pages:this.bookInfoForm.pages
+            })
             .then(res => {
-              if (res.data.success) {
+                if (res.data.success) {
                 this.$message({
                   message: res.data.msg,
                   type: "success"
@@ -241,7 +246,7 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      this.checked=false;
+      this.checked = false;
     }
   }
 };

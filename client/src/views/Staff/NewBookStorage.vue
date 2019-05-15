@@ -2,7 +2,6 @@
   <div class="form_container">
     <el-form
       :model="bookInfoForm"
-      status-icon
       :rules="rules"
       ref="bookInfoForm"
       label-width="100px"
@@ -85,6 +84,23 @@
           placeholder="请输入图书数量"
         ></el-input>
       </el-form-item>
+      <!--      elementui上传图片的upload组件-->
+<!--      <el-form-item label="图片">-->
+<!--        <input-->
+<!--          type="file"-->
+<!--          name="file"-->
+<!--          accept=".jpg, .jpeg, .png"-->
+<!--          @change="uploadAvatar"-->
+<!--        />-->
+        <!--        <el-upload-->
+        <!--          ref="upload"-->
+        <!--          action="https://jsonplaceholder.typicode.com/posts/"-->
+        <!--          :file-list="fileList"-->
+        <!--          :auto-upload="false">-->
+        <!--          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
+        <!--          <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>-->
+        <!--        </el-upload>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button
           type="primary"
@@ -114,7 +130,7 @@ export default {
       callback();
     };
     const validateNumber = (rule, value, callback) => {
-      const reg = /^[1-9][0-9]*$/;
+      const reg = /^[1-9]\d*$/;
       if (!reg.test(value)) {
         callback(new Error("请正确输入"));
       }
@@ -181,9 +197,21 @@ export default {
       callback();
     };
     return {
+      file2: null,
       bookInfoForm: {
-        ssh: "",
-        sub_id: "",
+          ssh: "A1/1",
+          sub_id: "A1",
+          ztm: "978-7-5502-1822-2",
+          zrz: "978-7-5502-1822-2",
+          isbn: "978-7-5502-1822-2",
+          price: "23",
+          cbs: "12",
+          datestr: "1996",
+          content: "978-7-5502-1822-2",
+          pages: "23",
+          reserve: 1
+/*        ssh: "A1/1",
+        sub_id: "A1",
         ztm: "",
         zrz: "",
         isbn: "",
@@ -192,7 +220,7 @@ export default {
         datestr: "",
         content: "",
         pages: "",
-        reserve: 1
+        reserve: 1*/
       },
       rules: {
         ssh: [{ required: true, message: "索书号不能为空", trigger: "blur" }],
@@ -209,15 +237,17 @@ export default {
           { required: true, message: "出版时间不能为空", trigger: "blur" },
           { validator: validateDate, trigger: "blur" }
         ],
-        price: [{ required: true, message: "单价不能为空", trigger: "blur" }],
+        price: [
+          { required: true, message: "单价不能为空", trigger: "blur" },
+          { validator: validateNumber, trigger: "blur" }
+        ],
+
         cbs: [{ required: true, message: "出版方不能为空", trigger: "blur" }],
         pages: [
           { required: true, message: "页码不能为空", trigger: "blur" },
           { validator: validateNumber, trigger: "blur" }
         ],
-          reserve: [
-              { validator: validateNumber, trigger: "blur" }
-          ]
+        reserve: [{ validator: validateNumber, trigger: "blur" }]
       }
     };
   },
@@ -225,23 +255,56 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios
-            .post("/api/staff/newBookStorage", this.bookInfoForm)
-            .then(res => {
-              if (res.data.success) {
-                this.$message({
-                  message: res.data.msg,
-                  type: "success"
-                });
-              } else {
-                this.$message.error(res.data.msg);
-              }
-            });
-        }
+          const formData = new FormData();
+          // if (this.file2) {
+            // formData.append("file", this.file2, this.file2.name);
+            // formData.append("ssh", this.bookInfoForm.ssh);
+            // formData.append("sub_id", this.bookInfoForm.sub_id);
+            // formData.append("ztm", this.bookInfoForm.ztm);
+            // formData.append("zrz", this.bookInfoForm.zrz);
+            // formData.append("isbn", this.bookInfoForm.isbn);
+            // formData.append("price", this.bookInfoForm.price);
+            // formData.append("cbs", this.bookInfoForm.cbs);
+            // formData.append("datestr", this.bookInfoForm.datestr);
+            // formData.append("content", this.bookInfoForm.content);
+            // formData.append("pages", this.bookInfoForm.pages);
+            // formData.append("reserve", this.bookInfoForm.reserve);
+            // this.$axios
+            //   .post("/api/staff/newBookStorage", formData, {
+            //     headers: { "content-type": "multipart/form-data" }
+            //   })
+            //   .then(res => {
+            //     if (res.data.success) {
+            //       this.$message({
+            //         message: res.data.msg,
+            //         type: "success"
+            //       });
+            //     } else {
+            //       this.$message.error(res.data.msg);
+            //     }
+            //   });
+          // } else {
+            this.$axios
+              .post("/api/staff/newBookStorage", this.bookInfoForm)
+              .then(res => {
+                if (res.data.success) {
+                  this.$message({
+                    message: res.data.msg,
+                    type: "success"
+                  });
+                } else {
+                  this.$message.error(res.data.msg);
+                }
+              });
+          }
+        // }
       });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    uploadAvatar(avatar) {
+      this.file2 = avatar.target.files[0];
     }
   }
 };

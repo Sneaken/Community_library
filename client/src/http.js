@@ -39,7 +39,6 @@ axios.interceptors.response.use (response => {
     //获取错误状态码
     const {status} = error.response;
     if (status === 401) {
-        console.log (router.currentRoute);
         if(router.currentRoute.path){
             Message.warning ('尚未登录，请先登录！');
             localStorage.removeItem('eleToken');

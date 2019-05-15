@@ -4,6 +4,7 @@
     <!--    <header class="header">-->
     <router-link to="/index">我的图书馆</router-link>
     <router-link to="library/classifySearch">分类浏览</router-link>
+    <router-link to="library/infoList">图书馆相关信息及规章制度</router-link>
     <!--    </header>-->
 
     <!--       搜索-->

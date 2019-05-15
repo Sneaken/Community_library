@@ -62,5 +62,8 @@
 </script>
 
 <style scoped>
-
+.demo-ruleForm{
+  width: 800px;
+  margin: 50px auto;
+}
 </style>

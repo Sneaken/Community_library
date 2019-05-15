@@ -34,12 +34,12 @@
             >登 录</el-button
           >
         </el-form-item>
-        <div class="tipArea">
-          <p>
-            还没有账号？现在
-            <router-link to="/user/register">注册</router-link>
-          </p>
-        </div>
+<!--        <div class="tipArea">-->
+<!--          <p>-->
+<!--            还没有账号？现在-->
+<!--            <router-link to="/user/register">注册</router-link>-->
+<!--          </p>-->
+<!--        </div>-->
       </el-form>
     </div>
   </div>
@@ -131,44 +131,43 @@ export default {
 </script>
 
 <style scoped>
-.login {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.form_container {
-  width: 370px;
-  height: 210px;
-  position: absolute;
-  top: 20%;
-  left: 34%;
-  padding: 25px;
-  border-radius: 5px;
-  text-align: center;
-}
-.form_container .manage_tip .title {
-  font-family: "Microsoft YaHei", serif;
-  font-weight: bold;
-  font-size: 20px;
-  color: #000;
-}
-.loginForm {
-  margin-top: 20px;
-  background-color: #fff;
-  padding: 20px 40px 20px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px #cccc;
-}
+  .login {
+    position: relative;
+    /*height: 936px;*/
+  }
+  .form_container {
+    width: 370px;
+    height: 210px;
+    position: absolute;
+    top: 20%;
+    left: 34%;
+    padding: 25px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  .form_container .manage_tip .title {
+    font-family: "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: #000;
+  }
+  .loginForm {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px 40px 20px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 5px 10px #cccc;
+  }
 
-.submit_btn {
-  width: 100%;
-}
-.tipArea {
-  text-align: right;
-  font-size: 12px;
-  color: #333;
-}
-.tipArea p a {
-  color: #409eff;
-}
+  .submit_btn {
+    width: 100%;
+  }
+  .tipArea {
+    text-align: right;
+    font-size: 12px;
+    color: #333;
+  }
+  .tipArea p a {
+    color: #409eff;
+  }
 </style>

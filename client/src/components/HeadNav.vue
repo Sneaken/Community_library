@@ -1,12 +1,12 @@
 <template>
   <header class="head-nav">
     <el-row>
-      <el-col :span="6" class="logo-container">
+      <el-col :span="6" :offset="3" class="logo-container">
         <span class="title">社区图书馆后台管理系统</span>
       </el-col>
-      <el-col :span="2" :offset="16" class="user">
+      <el-col :span="2" :offset="13" class="user">
         <div class="userInfo">
-          <div class="welcome">
+          <div class="welcome" v-if="user.name">
             <p class="name comename">欢迎</p>
             <p class="name username">{{ user.name }}</p>
           </div>
@@ -17,7 +17,7 @@
                 <i class="el-icon-caret-bottom el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="info">个人信息</el-dropdown-item>
+                <el-dropdown-item command="info" v-if="user.name">个人信息</el-dropdown-item>
                 <el-dropdown-item command="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

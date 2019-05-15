@@ -16,8 +16,9 @@
             target="_blank"
             class="link"
           >
-            <img src="../assets/book.jpg" alt="" width="120" height="173" />
-
+<!--            <img :src="item.img_place" alt="" width="120" height="173" v-if="item.img_place" />-->
+            <el-image  :src="item.img_place" style="width: 120px; height: 173px" v-if="item.img_place" lazy></el-image>
+            <img src="../assets/book.jpg" alt="" width="120" height="173" v-else />
             <div class="book-about">
               <h3 class="book-name">{{ item.ztm }}</h3>
               <!-- 书籍类型 -->
@@ -89,7 +90,6 @@ export default {
   methods: {
     handleNodeClick(data) {
       if (!data.children) {
-        // console.log (data);
         this.checked = true;
         this.getBookList(data.id);
       }
@@ -105,10 +105,9 @@ export default {
     },
     getBookList(data) {
       this.$axios
-        .get("/api/generalPurpose/findBook", {
+        .get("/api/generalPurpose/findBook2", {
           params: {
             input: data,
-            select: "category_id"
           }
         })
         .then(res => {

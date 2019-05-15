@@ -41,6 +41,8 @@ const bookCompensation = sequelize.define(
     }
   },
   {
+      timestamps: false,
+      freezeTableName: true,
     tableName: "book_compensation"
   }
 );

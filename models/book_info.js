@@ -45,6 +45,10 @@ const bookInfo = sequelize.define(
       type: Sequelize.DataTypes.STRING(255),
       allowNull: true
     },
+      img_place: {
+          type: Sequelize.DataTypes.STRING(255),
+          allowNull: true
+      },
     reserve: {
       type: Sequelize.DataTypes.INTEGER(1),
       allowNull: true,

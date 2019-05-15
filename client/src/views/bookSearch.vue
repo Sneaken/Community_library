@@ -14,7 +14,8 @@
             target="_blank"
             class="link"
           >
-            <img src="../assets/book.jpg" alt="" width="120" height="173" />
+            <el-image  :src="item.img_place" style="width: 120px; height: 173px" v-if="item.img_place" lazy></el-image>
+            <img src="../assets/book.jpg" alt="" width="120" height="173" v-else />
 
             <div class="book-about">
               <h3 class="book-name">{{ item.ztm }}</h3>
@@ -86,7 +87,7 @@ export default {
   created() {
     this.getBookList();
   },
-  //
+
   computed: {
     searchCount() {
       return this.allTableData.length;
@@ -99,15 +100,12 @@ export default {
           this.getBookList();
         }
       }
-      // deep: true
     },
     bookResult() {
       this.footer = true;
     }
   },
   components: {
-    // bookInfo,
-    // loadMore,
     noneData,
     search,
     siteFooter
@@ -124,7 +122,6 @@ export default {
         .then(res => {
           this.keywords = this.$route.query.input;
           if (res.data.success) {
-            // this.bookResult = res.data.data;
             this.allTableData = res.data.data;
             this.filterTableData = res.data.data;
             // 设置分页数据
@@ -159,10 +156,6 @@ export default {
       this.bookResult = this.allTableData.filter((item, index) => {
         return index < page_size;
       });
-      // this.$nextTick(() => {
-      //   //上滑到顶部
-      //   window.scrollTo(0, 0);
-      // });
     },
     setPaginations() {
       // 总页数
