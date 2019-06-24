@@ -199,28 +199,17 @@ export default {
     return {
       file2: null,
       bookInfoForm: {
-          ssh: "A1/1",
-          sub_id: "A1",
-          ztm: "978-7-5502-1822-2",
-          zrz: "978-7-5502-1822-2",
-          isbn: "978-7-5502-1822-2",
-          price: "23",
-          cbs: "12",
-          datestr: "1996",
-          content: "978-7-5502-1822-2",
-          pages: "23",
+          ssh: "",
+          sub_id: "",
+          ztm: "",
+          zrz: "",
+          isbn: "",
+          price: "",
+          cbs: "",
+          datestr: "",
+          content: "",
+          pages: "",
           reserve: 1
-/*        ssh: "A1/1",
-        sub_id: "A1",
-        ztm: "",
-        zrz: "",
-        isbn: "",
-        price: "",
-        cbs: "",
-        datestr: "",
-        content: "",
-        pages: "",
-        reserve: 1*/
       },
       rules: {
         ssh: [{ required: true, message: "索书号不能为空", trigger: "blur" }],
@@ -255,6 +244,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+
           const formData = new FormData();
           if (this.file2) {
             formData.append("file", this.file2, this.file2.name);

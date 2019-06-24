@@ -6,16 +6,16 @@
       prop="book_label"
       label="单册条码"
       align="center"
-      width="333%"
+      width="222%"
     >
     </el-table-column>
-    <el-table-column prop="ztm" label="正题名" align="center" width="333%">
+    <el-table-column prop="ztm" label="正题名" align="center" width="222%">
     </el-table-column>
-    <el-table-column prop="time" label="赔偿时间" align="center" width="333%">
+    <el-table-column prop="time" label="赔偿时间" align="center" width="222%">
     </el-table-column>
-    <el-table-column prop="money" label="赔偿金额" align="center" width="333%">
+    <el-table-column prop="money" label="赔偿金额" align="center" width="222%">
     </el-table-column>
-    <el-table-column prop="status" label="状态" align="center" width="333%">
+    <el-table-column prop="status" label="状态" align="center" width="222%">
     </el-table-column>
   </el-table>
 </template>

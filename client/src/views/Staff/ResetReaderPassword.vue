@@ -1,5 +1,4 @@
 <template>
-  <div>
     <div class="form_container">
       <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="80px"
                class="Form">
@@ -11,7 +10,6 @@
         </el-form-item>
       </el-form>
     </div>
-  </div>
 </template>
 
 <script>
@@ -94,5 +92,7 @@
 </script>
 
 <style scoped>
-
+.form_container{
+  width:500px;
+}
 </style>

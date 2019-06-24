@@ -1,31 +1,31 @@
 <template>
-  <el-table :data="tableData" border style="width: 100%">
+  <el-table :data="tableData" border style="width: 100%" class = "table">
     <el-table-column type="index" label="序号" align="center" width="70">
     </el-table-column>
     <el-table-column
       prop="book_label"
       label="单册条码"
       align="center"
-      width="333%"
+      width="200%"
     >
     </el-table-column>
-    <el-table-column prop="ztm" label="正题名" align="center" width="333%">
+    <el-table-column prop="ztm" label="正题名" align="center" width="200%">
     </el-table-column>
     <el-table-column
       prop="time_of_appointment"
       label="预约时间"
       align="center"
-      width="333%"
+      width="200%"
     >
     </el-table-column>
     <el-table-column
       prop="ending_time_of_appointment"
       label="预约结束时间"
       align="center"
-      width="333%"
+      width="200%"
     >
     </el-table-column>
-    <el-table-column prop="operation" label="操作" align="center" width="208%">
+    <el-table-column prop="operation" label="操作" align="center" width="200%">
       <template slot-scope="scope">
         <el-button size="small" @click="handleCancelRenewal(scope.row)"
           >取消预约</el-button
@@ -72,7 +72,7 @@ export default {
         });
     },
       handleCancelRenewal(row) {
-      // 预约
+      // 取消预约
       this.$axios
         .post("/api/user/cancelRenewal", {
           book_label: row.book_label
@@ -93,4 +93,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

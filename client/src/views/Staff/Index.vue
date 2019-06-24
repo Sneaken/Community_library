@@ -26,13 +26,21 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+/*.rightContainer {*/
+/*  position: relative;*/
+/*  top: 0;*/
+/*  left: 180px;*/
+/*  width: calc(100% - 180px);*/
+/*  height: calc(100% - 71px);*/
+/*  overflow: auto;*/
+/*  text-align: center;*/
+/*}*/
 .rightContainer {
-  position: relative;
-  top: 0;
+  position: fixed;
+  top: 71px;
   left: 180px;
   width: calc(100% - 180px);
   height: calc(100% - 71px);
   overflow: auto;
-  text-align: center;
 }
 </style>

@@ -73,5 +73,7 @@
 </script>
 
 <style scoped>
-
+.form_container{
+  width: 500px;
+}
 </style>

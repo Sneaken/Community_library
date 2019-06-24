@@ -115,7 +115,22 @@ export default {
         ]
       };
     }
-  }
+  },
+    mounted () {
+        /**
+         * 判定用户是否越权
+         * if true 判定越权
+         */
+        if (!this.$store.getters.user.identity || this.$store.getters.user.username ) {
+            //清除token
+            localStorage.removeItem("eleToken");
+            //设置vuex store
+            this.$store.dispatch("clearCurrentState");
+            //跳转
+            this.$router.push("/staff/login");
+            this.$message.error('权限不足');
+        }
+    }
 };
 </script>
 <style scoped>

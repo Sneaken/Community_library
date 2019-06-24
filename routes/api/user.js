@@ -50,8 +50,8 @@ router.post("/register", (req, res) => {
 
 //用户登录
 router.post("/login", (req, res) => {
-  let phone = req.body.phone;
-  let password = req.body.password;
+  const phone = req.body.phone;
+  const password = req.body.password;
   user
     .findOne({
       where: {
@@ -59,10 +59,12 @@ router.post("/login", (req, res) => {
       }
     })
     .then(result => {
+      //用户不存在
       if (!result) {
         return res.json({ success: false, msg: "用户不存在！" });
       } else {
         bcrypt.compare(password, result.password).then(isMatch => {
+          // 密码是否匹配
           if (isMatch) {
             const rule = {
               id_number: result.id_number,

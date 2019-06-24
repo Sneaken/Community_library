@@ -94,4 +94,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .demo-ruleForm{
+    width: 500px;
+  }
+</style>

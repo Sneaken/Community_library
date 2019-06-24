@@ -36,7 +36,7 @@ module.exports = passport => {
                         username: jwt_payload.username
                     }
                 }).then (user =>{
-                    if (user3){
+                    if (user){
                         return done(null,user);
                     }
                     return done(null,false);

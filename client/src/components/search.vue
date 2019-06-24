@@ -1,7 +1,6 @@
 <template>
   <div>
     <div style="margin-top: 15px;">
-      <!--      分类浏览-->
       <el-input
         placeholder="请输入内容"
         v-model="Form.input"
@@ -9,7 +8,7 @@
         @keyup.enter.native="submit"
       >
         <el-select v-model="Form.select" slot="prepend" placeholder="请选择">
-          <el-option label="题名" value="ztm"></el-option>
+          <el-option label="书名" value="ztm"></el-option>
           <el-option label="责任者" value="zrz"></el-option>
           <el-option label="ISBN号" value="isbn"></el-option>
           <el-option label="索书号" value="ssh"></el-option>

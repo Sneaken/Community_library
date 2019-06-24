@@ -6,26 +6,26 @@
       prop="book_label"
       label="单册条码"
       align="center"
-      width="333%"
+      width="200%"
     >
     </el-table-column>
-    <el-table-column prop="ztm" label="正题名" align="center" width="333%">
+    <el-table-column prop="ztm" label="正题名" align="center" width="200%">
     </el-table-column>
     <el-table-column
       prop="borrow_time"
       label="借阅时间"
       align="center"
-      width="333%"
+      width="245"
     >
     </el-table-column>
     <el-table-column
       prop="return_time"
       label="归还时间"
       align="center"
-      width="333%"
+      width="245"
     >
     </el-table-column>
-    <el-table-column prop="status" label="状态" align="center" width="333%">
+    <el-table-column prop="status" label="状态" align="center" width="100%">
     </el-table-column>
   </el-table>
 </template>

@@ -43,8 +43,7 @@ export default {
 .component-index {
   position: relative;
   height: 750px;
-  background: linear-gradient(180deg, #3498db, white);
-  /*background-color: #3498db;*/
+  background-color: #3498db;
 }
 a {
   margin-right: 10px;

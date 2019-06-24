@@ -1,5 +1,10 @@
 <template>
   <div class="continer">
+    <!-- 面包屑 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/library' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>关键字搜索</el-breadcrumb-item>
+    </el-breadcrumb>
     <search class="search"></search>
     <div class="component-eBookSearch md-xs">
       <div class="search-length">

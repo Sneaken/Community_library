@@ -40,7 +40,7 @@ axios.interceptors.response.use (response => {
     const {status} = error.response;
     if (status === 401) {
         if(router.currentRoute.path){
-            Message.warning ('尚未登录，请先登录！');
+            Message.warning ('权限不足，请先登录！');
             localStorage.removeItem('eleToken');
             router.replace({
                 name:"userLogin",

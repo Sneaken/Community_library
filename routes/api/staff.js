@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
   // 确定图片存储的位置
   destination: path.join(__dirname, "../../client/public/upload"),
   // 确定图片存储时的名字,注意，如果使用原名，可能会造成再次上传同一张图片的时候的冲突
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, Date.now() + file.originalname);
   }
 });
@@ -26,10 +26,11 @@ const BookInfo = require("../../models/book_info");
 const BookReservate = require("../../models/book_reservate");
 const BookCompensation = require("../../models/book_compensation");
 const Subclassification = require("../../models/subclassification");
+
 //员工注册
 router.post("/register", (req, res) => {
   const staff = req.body;
-  bcrypt.genSalt(10, function(err, salt) {
+  bcrypt.genSalt(10, function (err, salt) {
     bcrypt.hash(staff.password, salt, (err, hash) => {
       if (err) {
         console.log(err);
@@ -47,7 +48,7 @@ router.post("/register", (req, res) => {
             msg: "注册成功！"
           });
         })
-        .catch(function(err) {
+        .catch(function (err) {
           console.log(err);
           if (err.parent.errno === 1062) {
             res.json({
@@ -161,7 +162,7 @@ router.post(
     }).then(result => {
       bcrypt.compare(staff.password, result.password).then(isMatch => {
         if (isMatch) {
-          bcrypt.genSalt(10, function(err, salt) {
+          bcrypt.genSalt(10, function (err, salt) {
             bcrypt.hash(staff.pass, salt, (err, hash) => {
               if (err) {
                 console.log(err);
@@ -199,21 +200,26 @@ router.post(
     let book_label = req.body.book_label;
 
     return sequelize
-      .transaction(function(t) {
+      .transaction(function (t) {
         return User.findOne({
           where: {
             id_number: reader_number
           },
           transaction: t
         }).then(result => {
+          if (!result) {
+            throw new Error("该读者并不是本馆用户！");
+          }
           if (result.status === "正常") {
             return BookStorage.findOne({
               where: {
                 book_label
-                // status: '在库'
               },
               transaction: t
             }).then(result => {
+              if (!result) {
+                throw new Error("书标号输入错误！请检查！");
+              }
               if (result.status === "在库") {
                 return BookStorage.update(
                   {
@@ -303,6 +309,7 @@ router.post(
         });
       })
       .catch(err => {
+        console.log(err);
         res.json({
           success: false,
           msg: err.message
@@ -320,31 +327,62 @@ router.post(
     let isOverdue = false;
 
     return sequelize
-      .transaction(function(t) {
-        return BookBorrow.findOne({
+      .transaction(function (t) {
+        return BookStorage.findOne({
           where: {
             book_label
           },
           transaction: t
         }).then(result => {
-          if (result) {
-            const reader_number = result.reader_number;
-            const days = result.should_still_return_time - new Date();
-            if (days > 0) {
-              //正常归还
-              return BookReturn.create(
-                {
-                  reader_number,
-                  book_label,
-                  borrow_time: result.borrow_time,
-                  return_time: new Date(),
-                  status: "正常"
-                },
-                { transaction: t }
-              ).then(() => {
-                return BookStorage.update(
-                  { status: "在库" },
-                  { where: { book_label }, transaction: t }
+          if (!result) {
+            throw new Error("书籍信息不存在，请正确输入！");
+          }
+          return BookBorrow.findOne({
+            where: {
+              book_label
+            },
+            transaction: t
+          }).then(result => {
+            if (result) {
+              const reader_number = result.reader_number;
+              const days = result.should_still_return_time - new Date();
+              if (days > 0) {
+                //正常归还
+                return BookReturn.create(
+                  {
+                    reader_number,
+                    book_label,
+                    borrow_time: result.borrow_time,
+                    return_time: new Date(),
+                    status: "正常"
+                  },
+                  { transaction: t }
+                ).then(() => {
+                  return BookStorage.update(
+                    { status: "在库" },
+                    { where: { book_label }, transaction: t }
+                  ).then(() => {
+                    return BookBorrow.destroy({
+                      where: {
+                        reader_number,
+                        book_label
+                      },
+                      transaction: t
+                    });
+                  });
+                });
+              } else {
+                //逾期
+                isOverdue = true;
+                return BookReturn.create(
+                  {
+                    reader_number,
+                    book_label,
+                    borrow_time: result.borrow_time,
+                    return_time: new Date(),
+                    status: "逾期"
+                  },
+                  { transaction: t }
                 ).then(() => {
                   return BookBorrow.destroy({
                     where: {
@@ -352,46 +390,25 @@ router.post(
                       book_label
                     },
                     transaction: t
+                  }).then(() => {
+                    User.update(
+                      {
+                        status: "吊销期",
+                        end_time: +new Date() + 30 * 24 * 3600 * 1000
+                      },
+                      {
+                        where: {
+                          id_number: reader_number
+                        }
+                      }
+                    );
                   });
                 });
-              });
+              }
             } else {
-              //逾期
-              isOverdue = true;
-              return BookReturn.create(
-                {
-                  reader_number,
-                  book_label,
-                  borrow_time: result.borrow_time,
-                  return_time: new Date(),
-                  status: "逾期"
-                },
-                { transaction: t }
-              ).then(() => {
-                return BookBorrow.destroy({
-                  where: {
-                    reader_number,
-                    book_label
-                  },
-                  transaction: t
-                }).then(() => {
-                  User.update(
-                    {
-                      status: "吊销期",
-                      end_time: +new Date() + 30 * 24 * 3600 * 1000
-                    },
-                    {
-                      where: {
-                        id_number: reader_number
-                      }
-                    }
-                  );
-                });
-              });
+              throw new Error("该书尚未借阅，无需归还！");
             }
-          } else {
-            throw new Error("该书尚未借阅，无需归还！");
-          }
+          });
         });
       })
       .then(() => {
@@ -415,11 +432,10 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const bookInfo = req.body;
-    console.log(bookInfo);
-
-    console.log(req.file.filename);
+    // console.log(bookInfo);
+    // console.log(req.file.filename);
     return sequelize
-      .transaction(function(t) {
+      .transaction(function (t) {
         return BookInfo.findOne({
           where: {
             ssh: bookInfo.ssh
@@ -435,7 +451,7 @@ router.post(
             }).then(result => {
               return BookInfo.create(
                 {
-                  ssh: bookInfo.ssh,
+                  ssh: bookInfo.ssh.toUpperCase(),
                   ztm: bookInfo.ztm,
                   zrz: bookInfo.zrz,
                   isbn: bookInfo.isbn,
@@ -445,9 +461,7 @@ router.post(
                   content: bookInfo.content,
                   category_id: result.id,
                   pages: bookInfo.pages,
-                  img_place: req.file
-                    ? "/upload/" + req.file.filename
-                    : null,
+                  img_place: req.file ? "/upload/" + req.file.filename : null,
                   reserve: bookInfo.reserve
                 },
                 {
@@ -512,7 +526,7 @@ router.post(
 // 读者注册
 router.post("/registerReader", (req, res) => {
   const reader = req.body;
-  bcrypt.genSalt(10, function(err, salt) {
+  bcrypt.genSalt(10, function (err, salt) {
     bcrypt.hash("00000000", salt, (err, hash) => {
       if (err) {
         console.log(err);
@@ -532,7 +546,7 @@ router.post("/registerReader", (req, res) => {
             msg: "注册成功！"
           });
         })
-        .catch(function(err) {
+        .catch(function (err) {
           // console.log(err);
           if (err.parent.errno === 1062) {
             res.json({
@@ -556,7 +570,7 @@ router.post(
         id_number
       }
     }).then(result => {
-      bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.genSalt(10, function (err, salt) {
         bcrypt.hash("00000000", salt, (err, hash) => {
           if (err) {
             console.log(err);
@@ -618,7 +632,7 @@ router.post(
       if (result.loss === 1) {
         res.json({ success: false, msg: "读者证已挂失，销户失败！" });
       }
-      return sequelize.transaction(function(t) {
+      return sequelize.transaction(function (t) {
         return BookStorage.update(
           { reservation: 0, appointment_of_reader_number: null },
           {

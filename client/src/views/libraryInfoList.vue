@@ -11,11 +11,11 @@
         <li v-for="(item, index) in InfoList" :key="index">
           <router-link
             :to="{
-              name: 'info',
-              params: { title: item.title, content: item.content }
+              path: 'info',
+              query: { title: item.title }
             }"
           >
-            <p>{{ item.title }}</p>
+            <p>{{ index + 1 + " " + item.title }}</p>
           </router-link>
         </li>
       </ul>
@@ -36,8 +36,6 @@ export default {
       this.$axios.get("/api/generalPurpose/findInformation").then(res => {
         if (res.data.success) {
           this.InfoList = res.data.data;
-        } else {
-          console.log(2);
         }
       });
     }
@@ -51,16 +49,15 @@ export default {
 <style scoped>
 .info {
   width: 1000px;
-  margin: 10px auto;
+  margin: 50px auto;
 }
-a{
+a {
   text-decoration: none;
 }
 a p {
   font-size: 20px;
   margin: 20px;
-  text-align: center;
   padding-bottom: 10px;
-  border-bottom: 1px solid #999;
+  border-bottom: 1px dotted #ccc;
 }
 </style>

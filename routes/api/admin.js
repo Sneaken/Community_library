@@ -62,7 +62,7 @@ router.post(
           if (!result) {
             Staff.create({
               staff_phone: staff.staff_phone,
-              id_number: staff.id_number,
+              id_number: staff.id_number.toUpperCase(),
               name: staff.name,
               password: hash,
               identity: staff.identity

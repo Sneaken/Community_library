@@ -4,6 +4,7 @@
     status-icon
     ref="ruleForm2"
     label-width="100px"
+    :rules="rules"
     class="demo-ruleForm"
   >
     <el-form-item label="书标号" prop="book_label">
@@ -30,6 +31,9 @@
             return {
                 ruleForm2: {
                     book_label: "",
+                },
+                rules:{
+                    book_label:[{required: true, message: '书标号不能为空', trigger: 'blur'}]
                 }
             };
         },

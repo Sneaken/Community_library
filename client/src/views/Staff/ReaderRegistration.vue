@@ -141,4 +141,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .register{
+    width: 500px;
+  }
+</style>
